@@ -1,5 +1,5 @@
 {
-  "name": "sqlite-file-mana",
+  "name": "sqlitefilemana",
   "version": "1.0.0",
   "description": "管理硬盘海量零碎文件的一个 Windows 客户端软件。 使用SQLite 的 BLOB 类型 存储 图片、文档、音乐等文件。",
   "main": "main.js",

@@ -10,7 +10,7 @@ class DBTool {
     constructor(name) {
         let that = this;
         that.dbName = name;
-        that.fileName = name + '.gisFileDB';
+        that.fileName = name + '.sqlite3';
         that.fullPath = path.join(FSTool.basePath + '/MapDB', that.fileName);
         that.schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
     }

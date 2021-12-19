@@ -58,7 +58,7 @@ DBMana.getDBList = async function () {
             sizeFormat = (size / 1000000).toFixed(2) + 'GB';
         }
 
-        extName === '.gisFileDB' && fileInfoList.push({id: i, fileName, path, size, sizeFormat});
+        extName === '.sqlite3' && fileInfoList.push({id: i, fileName, path, size, sizeFormat});
     }
 
     return fileInfoList;
@@ -75,12 +75,14 @@ DBMana.createDB = async function (DBName, targetDirectory) {
     let targetDirectoryInfo = await FSTool.getFileInfo(targetDirectory);
 
     // 资源库 信息
-    let DBFilePath = `${targetDirectory}\\${DBName}.gisFileDB`;
+    let DBFilePath = `${FSTool.basePath}\\MapDB\\${DBName}.sqlite3`;
     let DBFileInfo = await FSTool.getFileInfo(DBFilePath);
     let res = false;
 
-    // 该映射目录是有效文件夹，并且目录下没有同名 gisFileDB 文件
+    // 该映射目录是有效文件夹，并且目录下没有同名 sqlite3 文件
     if (targetDirectoryInfo && targetDirectoryInfo.isDirectory && DBFileInfo === null) {
+
+
         let dbToll = new DBTool(DBName);
         await dbToll.init();
         await dbToll.packFile(targetDirectory, function (e) {
@@ -92,6 +94,7 @@ DBMana.createDB = async function (DBName, targetDirectory) {
         res = true;
     }
 
+    console.log(DBFileInfo,DBFilePath);
     return res;
 };
 
@@ -101,10 +104,10 @@ DBMana.exportDB = async function (DBName, targetDirectory) {
     let targetDirectoryInfo = await FSTool.getFileInfo(targetDirectory);
 
     // 资源库 信息
-    let DBFilePath = `${targetDirectory}\\${DBName}.gisFileDB`;
+    let DBFilePath = `${targetDirectory}\\${DBName}.sqlite3`;
     let res = false;
 
-    // 该映射目录是有效文件夹，并且目录下没有同名 gisFileDB 文件
+    // 该映射目录是有效文件夹，并且目录下没有同名 sqlite3 文件
     if (targetDirectoryInfo && targetDirectoryInfo.isDirectory) {
         let dbToll = new DBTool(DBName);
         await dbToll.init();
@@ -218,7 +221,7 @@ DBMana.getFileByMd5 = async function (DBName, MD5) {
 
 
 // DBMana.getFileListByPath('MapTile-google', '\\4\\10\\').then(e => console.log(e));
-// DBMana.createDB('设施','H:\\SQLiteFileMana\\FileResources\\MapTile-google')
+// DBMana.createDB('设施','D:\\GisFileMana\\FileResources\\MapTile-google')
 // DBMana.getDBPathTree('MapTile-google').then(e => console.log(e));
 // DBMana.getFileByMd5('MapTile-google', '69e4fb43d28bf4e9e874a9d90330237a').then(e => console.log(e));
 // DBMana.getFileByFullPath('MapTile-google', '\\3\\7\\4.png').then(e => console.log(e));

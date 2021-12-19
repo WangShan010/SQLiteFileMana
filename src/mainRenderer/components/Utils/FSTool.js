@@ -1,10 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const {fdir} = require("fdir");
-const { phasedFileInfoList, fourThreadFileInfoList} = require("./MD5/md5.js");
+const fs = require('fs');
+const path = require('path');
+const {fdir} = require('fdir');
+const {phasedFileInfoList, fourThreadFileInfoList} = require('./MD5/md5.js');
 
-const rootPath = path.join(__dirname, "../".repeat(50));
-const basePath = path.join(rootPath, "./SQLiteFileMana");
+const rootPath = path.join(__dirname, '../'.repeat(50));
+const basePath = path.join(rootPath, './SQLiteFileMana');
 const dirCache = {};
 
 /***
@@ -70,13 +70,14 @@ async function getFileInfo(path, calcMd5 = true) {
             } else {
                 info = {isDirectory: !!stats && stats.isDirectory()};
                 info.size = stats.size / 1000;
-                calcMd5 && !info.isDirectory && (info.md5 = require("crypto").createHash("md5").update(fs.readFileSync(path)).digest("hex"));
+                calcMd5 && !info.isDirectory && (info.md5 = require('crypto').createHash('md5').update(fs.readFileSync(path)).digest('hex'));
             }
             resolve(info);
         });
     });
 }
 
+// 创建文件
 async function createFile(filePath, data) {
     return new Promise(function (resolve, reject) {
         if (fs.existsSync(filePath)) {
@@ -84,31 +85,47 @@ async function createFile(filePath, data) {
             mkdir(filePath);
         }
 
-        fs.appendFile(filePath, data, "utf8", function (err) {
+        fs.appendFile(filePath, data, 'utf8', function (err) {
             err && resolve(false);
             resolve(true);
         });
     });
-
 }
 
-function mkdir(filePath) {
-    filePath = filePath.replace(/\\/g, "/");
-
-    const arr = filePath.split("/");
+// 创建空文件夹
+async function createDirectory(path) {
+    const dirCache = {};
+    const arr = path.replace(/\\/g, '/').split('/');
     let dir = arr[0];
     for (let i = 1; i < arr.length; i++) {
         if (!dirCache[dir] && !fs.existsSync(dir)) {
             dirCache[dir] = true;
             fs.mkdirSync(dir);
         }
-        dir = dir + "/" + arr[i];
+        dir = dir + '/' + arr[i];
     }
-    fs.writeFileSync(filePath, "");
+}
+
+function mkdir(filePath) {
+    filePath = filePath.replace(/\\/g, '/');
+
+    const arr = filePath.split('/');
+    let dir = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+        if (!dirCache[dir] && !fs.existsSync(dir)) {
+            dirCache[dir] = true;
+            fs.mkdirSync(dir);
+        }
+        dir = dir + '/' + arr[i];
+    }
+    fs.writeFileSync(filePath, '');
 }
 
 (async function init() {
-    await createFile(basePath + "/说明.txt", "系统初始化成功");
+    await createFile(basePath + '/日志.txt', '初始化成功\n');
+    await createDirectory(basePath + '/FileResources/');
+    await createDirectory(basePath + '/MapDB/');
+    await createDirectory(basePath + '/OutFile/');
 })();
 
 const FSTool = {

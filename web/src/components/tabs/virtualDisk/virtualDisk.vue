@@ -73,7 +73,7 @@
             <div class="diskGroup">
               <div class="diskGroup-head" onclick="$('.diskGroup-content').slideToggle('fast')">
                 <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
-                <span style="font-size: 15px;color: #1e3287">通用资源（4）</span>
+                <span style="font-size: 15px;color: #1e3287">通用资源（{{ DBList.length }}）</span>
               </div>
               <div class="diskGroup-content">
                 <div class="diskItem winActive" v-for="item in DBList" :key="item.id" @dblclick="inDBFile(item.fileName)">
@@ -437,7 +437,7 @@ export default {
     await that.monitorProgress();
     await that.refreshPath();
 
-    await this.getDBPathTree(this.DBList[0].label);
+    // await this.getDBPathTree(this.DBList[0].label);
 
     setInterval(function () {
       that.refreshPath();

@@ -10,13 +10,13 @@ FileSystemTool.choosePathDialog = async function () {
     return path;
 };
 
-// 文件选择器，加载 .gisFileDB 文件
+// 文件选择器，加载 .sqlite3 文件
 FileSystemTool.chooseFileDBDialog = async function () {
     let paths = await dialog.showOpenDialog({
         title: '打开数据库文件',
         filters: [{
-            name: 'gisFileDB',
-            extensions: ['gisFileDB']
+            name: 'sqlite3',
+            extensions: ['sqlite3']
         }]
     });
     let filePath = paths.filePaths.pop();
