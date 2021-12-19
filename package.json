@@ -1,7 +1,7 @@
 {
   "name": "sqlite-file-mana",
   "version": "1.0.0",
-  "description": "管理 GIS 文件的一个 Windows 客户端软件",
+  "description": "管理硬盘海量零碎文件的一个 Windows 客户端软件。 使用SQLite 的 BLOB 类型 存储 图片、文档、音乐等文件。",
   "main": "main.js",
   "scripts": {
     "mon": "node src/mainRenderer/components/WebServer/main.js",
@@ -16,9 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/mbtiles": "^0.12.1",
-    "better-sqlite3": "^7.4.4",
-    "blueimp-md5": "^2.19.0",
-    "electron": "^15.3.1",
+    "electron": "^16.0.5",
     "electron-reloader": "^1.2.1",
     "electron-squirrel-startup": "^1.0.0",
     "fdir": "^5.1.0",
@@ -27,9 +25,7 @@
     "koa-router": "^10.1.1",
     "koa2-cors": "^2.0.6",
     "node-cmd": "^5.0.0",
-    "single-line-log": "^1.1.2",
     "sqlite3": "^5.0.2",
-    "uuid": "^8.3.2",
     "ws": "^8.3.0"
   }
 }

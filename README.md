@@ -4,16 +4,13 @@
 
 
 
-| 标题     | 内容                     |
-| -------- | ------------------------ |
-| 国内镜像 |                          |
-| GitHub   |                          |
-| 最新版本 | V1.4	2021年12月19日   |
-| 作者     | 超神洋葱，QQ：2394837320 |
-
-
-
-
+| 信息     | 描述                                       |
+| -------- | ------------------------------------------ |
+| 国内镜像 | https://gitee.com/fyaoyao/SQLite-File-Mana |
+| GitHub   | 暂无                                       |
+| 最新版本 | V1.4	2021年12月19日                     |
+| 交流群   | QQ交流群：783844344                        |
+| 作者     | 超神洋葱                                   |
 
 
 
@@ -22,11 +19,9 @@
 ## 一、🚀简介
 管理 硬盘海量零碎文件的一个 Windows 客户端软件。
 
-- 扫描本地文件夹，导入数以百万的文件数据，统一存储在一个 **SQLite** 数据库 文件中，提升数据的备份、迁移效率。。
-- 支持将 SQLite 中的文件数据发布成 web 服务，为文件的分发提供便利，大大提高海量文件的读取速度。
-
+- 扫描本地文件夹，导入数以百万的文件数据，统一进行压缩并存储在一个 **SQLite** 数据库文件中，迁移（备份）数据时能极大提升文件复制速度。
+- 支持将 **SQLite** 中的文件数据发布成 web 服务，为文件的分发提供便利。
 - 提供友好的操作界面，使用纯 HTML ，高仿 window 10 的资源管理器 。
-- 核心代码开源！使用免费！
 
 
 
@@ -39,7 +34,7 @@
 
 ## 二、🎉技术架构
 
-### 2.1 前端技术
+### 1. 前端计算
 
 | 技术      | 名称                            | 官网                                                         |
 | --------- | ------------------------------- | ------------------------------------------------------------ |
@@ -47,7 +42,7 @@
 | Element   | 基于Vue的UI框架                 | [https://element.eleme.io](https://gitee.com/link?target=https%3A%2F%2Felement.eleme.io) |
 | BootStrap | HTML、CSS 和 JavaScript的UI框架 | https://v3.bootcss.com/                                      |
 
-### 2.2 后端技术
+### 2. 后端技术
 
 | 技术     | 名称                   | 官网                        |
 | -------- | ---------------------- | --------------------------- |
@@ -56,7 +51,7 @@
 | Koa2     | web 后台开发框架       | https://koa.bootcss.com/    |
 | SQLite   | 是一款轻型的本地数据库 | http://www.sqlite.org/      |
 
-### 2.3 开发工具
+### 3. 开发工具
 
 | 技术       | 名称         | 官网 |
 | ---------- | ------------ | ---- |
@@ -70,7 +65,7 @@
 ## 三、&#x1F4C2;目录结构
 
 ```
-GISFileMana                         -- 根目录
+SQLiteFileMana                         -- 根目录
 │  ├─doc                 			-- 说明文档
 │  ├─icon                     		-- 图标
 │  ├─src                     		-- 程序代码
@@ -85,7 +80,26 @@ GISFileMana                         -- 根目录
 
 ## 四、&#x1F463;开发指南
 
--  确保 
+
+
+```
+
+// 配置 cnpm
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+
+// 安装 electron
+cnpm install --save electron
+
+// 启动服务
+npm run dev
+
+// 安装打包程序
+cnpm install --save @electron-forge/cli
+npx electron-forge import
+```
+
+
 
 
 
@@ -93,7 +107,7 @@ GISFileMana                         -- 根目录
 
 
 
-### 5.1 GIS 开发
+### 1. GIS 数据托管
 
 	在 Cesium 开发开发过程中，地理资源大都以切片的方式显示地图：
 		
@@ -115,7 +129,7 @@ GISFileMana                         -- 根目录
 
 
 ```
-如果需要迁移数据或者备份，则需要大约 65 分钟。即便使用 WinRAR 软件压缩后再迁移，压缩也最快至少需要 38 分钟，之后仍需解压。
+如果需要迁移数据或者备份，则需要大约 65 分钟。即便使用 WinRAR 软件压缩后再迁移，压缩也最快至少需要 38 分钟，移动压缩包之后仍需解压。
 ```
 
 ![速度](./doc/速度.png)
@@ -124,40 +138,15 @@ GISFileMana                         -- 根目录
 
 
 
-## 六、&#x1F4E3;服务器部署
 
 
-
-```sh
-// 配置 cnpm
-npm install -g cnpm --registry=https://registry.npm.taobao.org
-
-
-// 安装 electron
-cnpm install --save electron
-
-
-// 安装打包程序
-npm install --save @electron-forge/cli
-npx electron-forge import
-```
-
-
-
-
-
-## 七、🤝 鸣谢
+## 六、🤝 鸣谢
 
 - 超神洋葱 代码贡献者，主要作者
 
   
 
 
-
-## 八、&#x1F34E; QQ交流群
-
-- 1群: xxxxxx
-- 2群: xxxxxx
 
 
 

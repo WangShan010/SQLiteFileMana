@@ -2,7 +2,7 @@ const path = require('path');
 let FSTool = require('../../src/mainRenderer/components/Utils/FSTool.js');
 
 async function test01() {
-    let basePath='D:\\GisFileMana\\FileResources\\MapTile-google'
+    let basePath='D:\\SQLiteFileMana\\FileResources\\MapTile-google'
     let p = path.join(basePath);
 
     let fileList = await FSTool.getFileList(p);
@@ -23,7 +23,7 @@ async function test01() {
 
 
 async function test02() {
-    let basePath = 'H:\\GisFileMana\\MapDB'
+    let basePath = 'H:\\SQLiteFileMana\\MapDB'
 
     let dInfo = await FSTool.getFileInfo(basePath);     //获取文件信息
     console.log(dInfo);

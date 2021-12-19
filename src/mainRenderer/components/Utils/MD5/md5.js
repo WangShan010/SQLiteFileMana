@@ -1,6 +1,5 @@
 const fs = require("fs");
 let cp = require("child_process");
-const blueimpMd5 = require("blueimp-md5");
 const Buffer = require("buffer").Buffer;
 
 const calcFileInfo = require("./lib/calcFileInfo.js");
@@ -189,7 +188,7 @@ async function fileMd5(path) {
 
 // 计算字符串的 MD5
 async function stringMd5(str) {
-    return blueimpMd5(str);
+    return require("crypto").createHash("md5").update(Buffer.from(str)).digest("hex");
 }
 
 // 数组切分为每 subNum 个一组

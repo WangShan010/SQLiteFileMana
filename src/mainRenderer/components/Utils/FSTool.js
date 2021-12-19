@@ -4,7 +4,7 @@ const {fdir} = require("fdir");
 const { phasedFileInfoList, fourThreadFileInfoList} = require("./MD5/md5.js");
 
 const rootPath = path.join(__dirname, "../".repeat(50));
-const basePath = path.join(rootPath, "./GisFileMana");
+const basePath = path.join(rootPath, "./SQLiteFileMana");
 const dirCache = {};
 
 /***
@@ -25,10 +25,10 @@ async function getFileList(parentPath) {
  *     （二）当文件数量过多时，开启 4 个进程，同时进行读取与计算。
  *      例子：
  *      let fileInfoList = await FSTool.getFileInfoList([
- *          'D:\\GisFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\0.terrain',
- *          'D:\\GisFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\1.terrain'
+ *          'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\0.terrain',
+ *          'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\1.terrain'
  *      ],
- *      'D:\\GisFileMana\\FileResources\\DEM-wordHeights'
+ *      'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights'
  *      );
  *
  * 大数据量模式：
@@ -43,10 +43,10 @@ async function getFileList(parentPath) {
  *
  *      let fileInfoList = [];
  *      await FSTool.getFileInfoList([
- *          'D:\\GisFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\0.terrain',
- *          'D:\\GisFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\1.terrain',
+ *          'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\0.terrain',
+ *          'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\4\\-1\\1.terrain',
  *       ...],
- *      'D:\\GisFileMana\\FileResources\\DEM-wordHeights',
+ *      'D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights',
  *      phasedList => {
  *           while (phasedList.length > 0) fileInfoList.push(phasedList.pop());
  *          }

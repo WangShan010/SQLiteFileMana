@@ -1,7 +1,7 @@
 let DBTool = require('../../src/mainRenderer/components/DBMana/DBTool/DBTool.js');
 
 async function main() {
-    let basePath='D:\\GisFileMana\\FileResources\\MapTile-google'
+    let basePath='D:\\SQLiteFileMana\\FileResources\\MapTile-google'
     let DBName = 'MapTile-google';
 
     console.time('打包');
@@ -10,8 +10,8 @@ async function main() {
 
 
     await dbTool.packFile(basePath);
-    // await dbTool.packFile('D:\\GisFileMana\\FileResources\\MapTile-google');
-    // await dbTool.packFile('D:\\GisFileMana\\FileResources\\MapTile-google');
+    // await dbTool.packFile('D:\\SQLiteFileMana\\FileResources\\MapTile-google');
+    // await dbTool.packFile('D:\\SQLiteFileMana\\FileResources\\MapTile-google');
 
 
     // await dbTool.exportFile()

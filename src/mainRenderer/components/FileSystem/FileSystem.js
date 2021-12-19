@@ -29,7 +29,7 @@ FileSystemTool.openCatalogue = async function (path) {
 };
 
 FileSystemTool.openFile = async function (path) {
-    nodeCmd.run('D:\\GisFileMana\\FileResources\\DEM-wordHeights\\3\\-1\\7.terrain', function (e) {
+    nodeCmd.run('D:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\3\\-1\\7.terrain', function (e) {
         console.log(e);
     });
 };

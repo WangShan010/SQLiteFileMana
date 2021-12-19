@@ -36,7 +36,7 @@ app.use(Microservice.routes());
 const DBWebServer = {
     run: async function () {
         let server = app.listen(port, () => {
-            console.log(`GISFileMana Wen服务 http://localhost:${port}`);
+            console.log(`SQLiteFileMana Wen服务 http://localhost:${port}`);
         });
 
         // 同一个端口，开启 WebSocket 服务
