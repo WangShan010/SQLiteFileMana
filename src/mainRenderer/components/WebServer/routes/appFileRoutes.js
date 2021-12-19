@@ -31,6 +31,7 @@ appFileRoutes
     })
     .get('/createDB', async (ctx, next) => {
         ctx.set('Content-Type', 'application/json;charset=utf-8');
+        console.log('准备创建数据库');
         let param = ctx.request.query;
         let res = await DBMana.createDB(param.DBName, param.targetDirectory);
         ctx.body = JSON.stringify({res});
