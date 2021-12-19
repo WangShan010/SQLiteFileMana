@@ -15,7 +15,7 @@ const WebSocket = require('ws');
 const webSocketTool = require('./webSocketTool/webSocketTool.js');
 const appFileRoutes = require('./routes/appFileRoutes.js');
 const sysFileRoutes = require('./routes/sysFileRoutes.js');
-const Microservice = require('./routes/Microservice.js');
+const microService = require('./routes/microService.js');
 const port = 3000;
 
 const app = new Koa();
@@ -31,7 +31,7 @@ app.use(router.allowedMethods({
 
 app.use(appFileRoutes.routes());
 app.use(sysFileRoutes.routes());
-app.use(Microservice.routes());
+app.use(microService.routes());
 
 const DBWebServer = {
     run: async function () {
@@ -45,5 +45,6 @@ const DBWebServer = {
     }
 };
 
+DBWebServer.run()
 
 module.exports = DBWebServer;

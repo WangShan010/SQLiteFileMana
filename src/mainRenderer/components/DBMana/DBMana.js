@@ -220,7 +220,8 @@ DBMana.getFileByMd5 = async function (DBName, MD5) {
 };
 
 
-// DBMana.getFileListByPath('MapTile-google', '\\4\\10\\').then(e => console.log(e));
+// DBMana.getFileListByPath('MapTile-google', '\\0\\0\\0.png').then(e => console.log(e));
+// DBMana.getFileByFullPath('MapTile-google', '\\3\\7\\4.png').then(e => console.log(e));
 // DBMana.createDB('设施','D:\\GisFileMana\\FileResources\\MapTile-google')
 // DBMana.getDBPathTree('MapTile-google').then(e => console.log(e));
 // DBMana.getFileByMd5('MapTile-google', '69e4fb43d28bf4e9e874a9d90330237a').then(e => console.log(e));
