@@ -1,8 +1,7 @@
-const fs = require("fs");
-let cp = require("child_process");
-const Buffer = require("buffer").Buffer;
+const fs = require('fs');
+let cp = require('child_process');
 
-const calcFileInfo = require("./lib/calcFileInfo.js");
+const calcFileInfo = require('./lib/calcFileInfo.js');
 
 // 单进程计算 文件数组 的 MD5
 async function simpleFileInfoList(pathList, phasedFunc = null, progressFunc) {
@@ -24,25 +23,25 @@ async function simpleFileInfoList(pathList, phasedFunc = null, progressFunc) {
         reportProgress++;
         if (reportProgress === ProgressNumber) {
             reportProgress = 0;
-            typeof progressFunc === "function" && progressFunc(
-                {description:"【扫描 MD5】", completed: index, total: allFileListCount}
+            typeof progressFunc === 'function' && progressFunc(
+                {description: '【扫描 MD5】', completed: index, total: allFileListCount}
             );
         }
     }
 
-    if (typeof phasedFunc === "function") {
+    if (typeof phasedFunc === 'function') {
         phasedFunc(md5List);
         md5List = [];
     }
 
-    typeof progressFunc === "function" && progressFunc(
-        {description:"【扫描 MD5】", completed: index, total: allFileListCount}
+    typeof progressFunc === 'function' && progressFunc(
+        {description: '【扫描 MD5】', completed: index, total: allFileListCount}
     );
     return md5List;
 }
 
 // 单线程、内存设阈值的 计算文件数组 信息，避免进程的内存占用量过高
-async function phasedFileInfoList(pathList, phasedFunc, option, progressFunc) {
+async function phasedFileInfoList(pathList, phasedFunc, option = {}, progressFunc) {
     let mainMaxMemory = 100 << 10;      // 主进程最大的内存限制 ，默认 100MB
     let mainBufferTotal = 0;            // 当前主进程的内存占用量
 
@@ -67,24 +66,24 @@ async function phasedFileInfoList(pathList, phasedFunc, option, progressFunc) {
         reportProgress++;
         if (reportProgress === ProgressNumber) {
             reportProgress = 0;
-            typeof progressFunc === "function" && progressFunc(
-                {description: "【单线程、100MB 内存设阈值，扫描 MD5】", completed: index, total: allFileListCount}
+            typeof progressFunc === 'function' && progressFunc(
+                {description: '【单线程、100MB 内存设阈值，扫描 MD5】', completed: index, total: allFileListCount}
             );
         }
 
-        if (mainBufferTotal > mainMaxMemory && typeof phasedFunc === "function") {
+        if (mainBufferTotal > mainMaxMemory && typeof phasedFunc === 'function') {
             mainBufferTotal = 0;
             await phasedFunc(md5List);
             md5List = [];
         }
     }
 
-    typeof progressFunc === "function" && progressFunc(
-        {description: "【单线程、100MB 内存设阈值，扫描 MD5】", completed: index, total: allFileListCount}
+    typeof progressFunc === 'function' && progressFunc(
+        {description: '【单线程、100MB 内存设阈值，扫描 MD5】', completed: index, total: allFileListCount}
     );
 
 
-    if (typeof phasedFunc === "function") {
+    if (typeof phasedFunc === 'function') {
         await phasedFunc(md5List);
         md5List = [];
     }
@@ -93,7 +92,7 @@ async function phasedFileInfoList(pathList, phasedFunc, option, progressFunc) {
 }
 
 // 开启 4 个进程来计算 文件数组 的 MD5
-async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc) {
+async function fourThreadFileInfoList(pathList, phasedFunc, option = {}, progressFunc) {
     let coreNum = 4;
     let mainMaxMemory = 120 << 10;      // 主进程最大的内存限制 ，默认 100MB
     let mainBufferTotal = 0;            // 当前主进程的内存占用量
@@ -107,22 +106,22 @@ async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc)
     function creatThread(threadName, threadPathList) {
         return new Promise(function (resolve) {
             // 创建子进程
-            let n = cp.fork(__dirname + "/lib/ThreadMd5.js");
+            let n = cp.fork(__dirname + '/lib/ThreadMd5.js');
 
             // 向子进程发送数据
-            n.send({threadName, threadPathList, basePath: option.basePath, maxMemory: threadMaxMemory});
+            n.send({threadName, threadPathList, basePath: option.basePath || '', maxMemory: threadMaxMemory});
 
-            n.on("message", function (reData) {
+            n.on('message', function (reData) {
                 let message = reData.message;
                 switch (message) {
-                    case "Progress": {
+                    case 'Progress': {
                         index += reData.data;
-                        typeof progressFunc === "function" && progressFunc(
-                            {description: "【开启 4 进程扫描 MD5】", completed: index, total: allFileCount}
+                        typeof progressFunc === 'function' && progressFunc(
+                            {description: '【开启 4 进程扫描 MD5】', completed: index, total: allFileCount}
                         );
                     }
                         break;
-                    case "Phased": {
+                    case 'Phased': {
                         while (reData.data.length) {
                             let f = reData.data.pop();
                             f.buffer = Buffer.from(f.buffer.data);
@@ -131,7 +130,7 @@ async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc)
                         }
 
                         // 超出最大内存了，就把当前这部分的数据弹出进程。
-                        if (typeof phasedFunc === "function" && mainBufferTotal > mainMaxMemory) {
+                        if (typeof phasedFunc === 'function' && mainBufferTotal > mainMaxMemory) {
                             mainBufferTotal = 0;
                             phasedFunc(resList);
                             // 释放内存
@@ -139,7 +138,7 @@ async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc)
                         }
                     }
                         break;
-                    case "RemainsData": {
+                    case 'RemainsData': {
                         while (reData.data.length) {
                             let f = reData.data.pop();
                             f.buffer = Buffer.from(f.buffer.data);
@@ -147,13 +146,13 @@ async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc)
                             resList.push(f);
                         }
 
-                        if (typeof phasedFunc === "function") {
+                        if (typeof phasedFunc === 'function') {
                             phasedFunc(resList);
                             // 释放内存
                             resList = [];
                         }
 
-                        resolve("End");
+                        resolve('End');
                         n.disconnect();
                     }
                 }
@@ -183,12 +182,12 @@ async function fourThreadFileInfoList(pathList, phasedFunc, option,progressFunc)
 // 计算文件的 MD5 值
 async function fileMd5(path) {
     const buffer = fs.readFileSync(path);
-    return require("crypto").createHash("md5").update(buffer).digest("hex");
+    return require('crypto').createHash('md5').update(buffer).digest('hex');
 }
 
 // 计算字符串的 MD5
 async function stringMd5(str) {
-    return require("crypto").createHash("md5").update(Buffer.from(str)).digest("hex");
+    return require('crypto').createHash('md5').update(Buffer.from(str)).digest('hex');
 }
 
 // 数组切分为每 subNum 个一组
@@ -220,7 +219,7 @@ async function readFile(path) {
             if (error) {
                 console.log(error);
             }
-            resolve(error ? Buffer.from("") : date);
+            resolve(error ? Buffer.from('') : date);
         });
     });
 }

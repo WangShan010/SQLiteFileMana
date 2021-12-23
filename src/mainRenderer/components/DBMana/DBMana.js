@@ -46,7 +46,7 @@ DBMana.getDBList = async function () {
         let path = filePathList[i];
         let fileName = path.split('\\').slice(-1)[0].split('.')[0];
         let extName = Path.extname(path);
-        let info = await FSTool.getFileInfo(path, false);
+        let info = await FSTool.getPathInfo(path, false);
         let size = info.size;
         let sizeFormat = null;
 
@@ -72,11 +72,11 @@ DBMana.getDBList = async function () {
  */
 DBMana.createDB = async function (DBName, targetDirectory) {
     // 映射目录 的信息
-    let targetDirectoryInfo = await FSTool.getFileInfo(targetDirectory);
+    let targetDirectoryInfo = await FSTool.getPathInfo(targetDirectory);
 
     // 资源库 信息
     let DBFilePath = `${FSTool.basePath}\\MapDB\\${DBName}.sqlite3`;
-    let DBFileInfo = await FSTool.getFileInfo(DBFilePath);
+    let DBFileInfo = await FSTool.getPathInfo(DBFilePath);
     let res = false;
 
     // 该映射目录是有效文件夹，并且目录下没有同名 sqlite3 文件
@@ -101,7 +101,7 @@ DBMana.createDB = async function (DBName, targetDirectory) {
 // 导出资源库
 DBMana.exportDB = async function (DBName, targetDirectory) {
     // 映射目录 的信息
-    let targetDirectoryInfo = await FSTool.getFileInfo(targetDirectory);
+    let targetDirectoryInfo = await FSTool.getPathInfo(targetDirectory);
 
     // 资源库 信息
     let DBFilePath = `${targetDirectory}\\${DBName}.sqlite3`;

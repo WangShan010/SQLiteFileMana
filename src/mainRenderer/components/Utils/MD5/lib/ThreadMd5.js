@@ -41,7 +41,8 @@ process.on('message',
                 md5List = [];
             }
         }
-        // 补足向主进程汇报一次进度到 100 %
+
+        // 补足向主进程汇报到 100 %
         process.send({message: 'Progress', data: reportProgress});
 
         //弹出剩余的数据，并结束子进程

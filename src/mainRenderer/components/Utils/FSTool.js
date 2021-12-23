@@ -62,7 +62,7 @@ async function getFileInfoList(fullPathList, phasedFunc, option, progressFunc) {
 }
 
 // 获取文件信息：【大小、是否为文件夹、md5】
-async function getFileInfo(path, calcMd5 = true) {
+async function getPathInfo(path, calcMd5 = true) {
     return new Promise(function (resolve) {
         fs.stat(path, (err, stats) => {
             let info = null;
@@ -130,7 +130,7 @@ function mkdir(filePath) {
 
 const FSTool = {
     basePath,
-    getFileInfo,
+    getPathInfo,
     getFileList,
     getFileInfoList,
     createFile,

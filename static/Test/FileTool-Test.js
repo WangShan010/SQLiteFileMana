@@ -1,8 +1,9 @@
 const path = require('path');
 let FSTool = require('../../src/mainRenderer/components/Utils/FSTool.js');
+let {fourThreadFileInfoList} = require('../../src/mainRenderer/components/Utils/MD5/md5.js');
 
 async function test01() {
-    let basePath='D:\\SQLiteFileMana\\FileResources\\MapTile-google'
+    let basePath = 'D:\\SQLiteFileMana\\FileResources\\MapTile-google';
     let p = path.join(basePath);
 
     let fileList = await FSTool.getFileList(p);
@@ -15,7 +16,7 @@ async function test01() {
     await FSTool.getFileInfoList(fileList, phasedList => {
             while (phasedList.length > 0) fileInfoList.push(phasedList.pop());
         }, {basePath}
-    )
+    );
 
 
     console.log(fileInfoList);
@@ -23,11 +24,19 @@ async function test01() {
 
 
 async function test02() {
-    let basePath = 'H:\\SQLiteFileMana\\MapDB'
+    console.time('test02');
+    let basePath = 'H:\\SQLiteFileMana\\FileResources\\DEM-wordHeights\\9';
 
-    let dInfo = await FSTool.getFileInfo(basePath);     //获取文件信息
-    console.log(dInfo);
+    // let dInfo = await FSTool.getPathInfo(basePath);     //获取文件信息
+    let fileList = await FSTool.getFileList(basePath);     //获取文件信息
+
+    // let fileInfo = await FSTool.getFileInfoList(fileList);
+
+    let fileInfo = await fourThreadFileInfoList(fileList);
+    console.log(fileInfo.length);
+    console.timeEnd('test02');
 }
 
 
-test02();
+
+// test02();

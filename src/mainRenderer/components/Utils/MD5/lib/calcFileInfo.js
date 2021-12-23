@@ -1,5 +1,6 @@
 const fs = require('fs');
 
+// 计算文件信息
 async function calcFileInfo(path, basePath) {
     let filePath = path;
     let fileName = filePath.split('\\').slice(-1)[0];
