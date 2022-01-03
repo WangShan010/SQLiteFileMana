@@ -94,7 +94,7 @@ DBMana.createDB = async function (DBName, targetDirectory) {
         res = true;
     }
 
-    console.log(DBFileInfo,DBFilePath);
+    console.log(DBFileInfo, DBFilePath);
     return res;
 };
 
@@ -209,7 +209,10 @@ DBMana.getFileListByPath = async function (DBName, path) {
 DBMana.getFileByFullPath = async function (DBName, path) {
     let dbToll = new DBTool(DBName);
     let fileList = await dbToll.getFileByFullPath(path);
-    return fileList.pop();
+    let file = fileList.pop();
+    let fileData = file.file_zip === 'gzip' ? await zlibPromise.unzip(file.file_data) : file.file_data;
+
+    return fileData;
 };
 
 // 读取文件

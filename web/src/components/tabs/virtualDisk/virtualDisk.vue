@@ -1,20 +1,7 @@
 <template>
   <div class="comMain">
-    <div class="tip">
-      <img src="../../../assets/fileMana/virtualDisk/img/img.png" height="30" width="171"/>
-    </div>
 
-    <div class="tabs">
-      <div class="tab-names">
-        <div :class="{'tab-active':currentTab==='文件'}" @click="currentTab='文件'">文件</div>
-        <div :class="{'tab-active':currentTab==='版本号'}" @click="currentTab='版本号'">版本号</div>
-        <div :class="{'tab-active':currentTab==='关于'}" @click="currentTab='关于'">关于</div>
-      </div>
-      <div class="tab-content">
-
-      </div>
-    </div>
-
+    <!-- 文件路径 -->
     <div class="pathNav">
       <div class="pathNavTool">
         <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
@@ -42,14 +29,15 @@
       </div>
       <div class="pathSearch">
         <el-input
-            size="mini"
-            placeholder="搜索文件"
-            prefix-icon="el-icon-search">
+          size="mini"
+          placeholder="搜索文件"
+          prefix-icon="el-icon-search">
           <!--            v-model="input4"-->
         </el-input>
       </div>
     </div>
 
+    <!-- 文件浏览页面 -->
     <div class="fileExplorer">
       <div class="row">
         <div class="col-xs-2">
@@ -79,7 +67,7 @@
                 <div class="diskItem winActive" v-for="item in DBList" :key="item.id" @dblclick="inDBFile(item.fileName)">
                   <div class="row">
                     <div class="col-xs-1 disk-icon">
-                      <img src="../../../assets/fileMana/virtualDisk/img/c.png">
+                      <img src="../../../assets/fileMana/virtualDisk/img/disk/book.png">
                     </div>
                     <div class="col-xs-1 disk-info">
                       <div class="disk-name">{{ item.fileName }}</div>
@@ -144,18 +132,23 @@
         <div class="col-xs-3" style="padding:0 10px">
           <h2>预览</h2>
           <a href="#" class="thumbnail">
-            <img style="width: 100%; display: block;"
+            <img v-if="!previewImg" style="width: 100%; display: block;"
                  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTcxIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE3MSAxODAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjwhLS0KU291cmNlIFVSTDogaG9sZGVyLmpzLzEwMCV4MTgwCkNyZWF0ZWQgd2l0aCBIb2xkZXIuanMgMi42LjAuCkxlYXJuIG1vcmUgYXQgaHR0cDovL2hvbGRlcmpzLmNvbQooYykgMjAxMi0yMDE1IEl2YW4gTWFsb3BpbnNreSAtIGh0dHA6Ly9pbXNreS5jbwotLT48ZGVmcz48c3R5bGUgdHlwZT0idGV4dC9jc3MiPjwhW0NEQVRBWyNob2xkZXJfMTdkOTA0OGIyMDcgdGV4dCB7IGZpbGw6I0FBQUFBQTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxMHB0IH0gXV0+PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImhvbGRlcl8xN2Q5MDQ4YjIwNyI+PHJlY3Qgd2lkdGg9IjE3MSIgaGVpZ2h0PSIxODAiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSI1OSIgeT0iOTQuNSI+MTcxeDE4MDwvdGV4dD48L2c+PC9nPjwvc3ZnPg=="
+                 data-holder-rendered="true">
+
+
+            <img v-if="previewImg" style="width: 100%; display: block;"
+                 :src="previewImg"
                  data-holder-rendered="true">
           </a>
         </div>
       </div>
     </div>
 
-    <div class="foot">
-      <span style="padding-right: 18px">{{ fileList.length }}&nbsp;&nbsp;个项目</span>
+    <div class="foot row">
+      <span class="col-xs-2">{{ fileList.length }}&nbsp;&nbsp;个项目</span>
 
-      <div class="progress" style="position: fixed;bottom:12px;left:200px;display: inline-block;height:8px;width: 650px;margin: 0">
+      <div class="col-xs-9 progress">
         <div class="progress-bar progress-bar-success progress-bar-striped active" :style="{width: runProgress+'%'}"></div>
       </div>
     </div>
@@ -303,6 +296,8 @@ export default {
 
       fileList: [],                   // 当前路径下的文件列表
 
+      previewImg: '',
+
       pathTree: [{
         children: 'children',
         label: 'label'
@@ -382,17 +377,20 @@ export default {
       this.pathTree = await API.getDBPathTree(DBName);
       console.log('目录树', this.pathTree);
     },
-    // 选取文件
+    // 淡季文件，进行选取
     async chooseFile(e) {
       this.selPath = e.file_path_location;
       this.selFileName = e.file_name;
       this.selFilePath = e.file_full_path;
       if (this.selFilePath) {
-        await this.previewFile(this.selFilePath);
+        await this.previewFile(this.currentDBName, this.selFilePath);
       }
     },
-    async previewFile(fullPath) {
+    async previewFile(DBName, path) {
+      let fileBuffer = await API.getFileByFullPath(DBName, path);
+      let png_base64 = 'data:image/png;base64,' + btoa(new Uint8Array(fileBuffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
 
+      this.previewImg = png_base64;
     },
 
     async changeSavePath() {
@@ -473,28 +471,10 @@ export default {
   height: calc(100% - 2px);
 }
 
-.tabs {
-  height: 26px;
-  margin: 1px 0 3px 1px;
-  border-bottom: 1px silver solid;
-
-  .tab-names div {
-    display: inline-block;
-    text-align: center;
-    padding: 3px 16px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-
-  .tab-active {
-    background-color: #0165c3;
-    color: white;
-  }
-}
-
 
 .pathNav {
   height: 28px;
+  padding-top: 5px;
 
 
   .pathNavTool {
@@ -524,7 +504,7 @@ export default {
 
     .pathItem {
       display: inline-block;
-      padding: 2px 2px;
+      padding: 1px 2px;
       height: 100%;
       cursor: pointer;
       border: 1px solid transparent;
@@ -554,7 +534,7 @@ export default {
 
 
 .fileExplorer {
-  height: calc(100% - 112px);
+  height: calc(100% - 65px);
   margin-top: 6px;
   overflow: auto;
 
@@ -670,8 +650,19 @@ export default {
 
 
 .foot {
+  position: fixed;
+  width: 100%;
+  bottom: 2px;
+
   height: 25px;
   padding: 3px 0 3px 11px;
   font-size: 12px;
+
+
+  .progress {
+    display: inline-block;
+    height: 8px;
+    margin: 6px 0 0 0;
+  }
 }
 </style>

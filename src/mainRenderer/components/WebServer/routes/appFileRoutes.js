@@ -43,6 +43,13 @@ appFileRoutes
         let res = await DBMana.exportDB(param.DBName, param.targetDirectory);
         ctx.body = JSON.stringify({res});
     })
+    .get('/getFileByFullPath', async (ctx, next) => {
+        ctx.set('Content-Type', 'image/png');
+        console.log('获取资源');
+        let param = ctx.request.query;
+        let fileBlob = await DBMana.getFileByFullPath(param.DBName, param.path);
+        ctx.body = fileBlob;
+    })
 
 ;
 
