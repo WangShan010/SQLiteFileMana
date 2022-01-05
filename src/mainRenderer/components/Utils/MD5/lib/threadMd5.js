@@ -1,4 +1,5 @@
-const calcFileInfo = require('./calcFileInfo.js')
+const calcFileInfo = require('./calcFileInfo.js');
+const fs = require('fs');
 /**
  * 子进程，用于计算文件的 MD5 值
  *
@@ -20,8 +21,8 @@ process.on('message',
 
         // 根据 Buffer 计算 MD5 值
         for (let i = 0; i < count; i++) {
-            let filePath = threadPathList[i]
-            let fileInfo = await calcFileInfo(filePath, basePath)
+            let filePath = threadPathList[i];
+            let fileInfo = await calcFileInfo(filePath, basePath);
             md5List.push(fileInfo);
 
 
@@ -36,9 +37,10 @@ process.on('message',
             bufferTotal += fileInfo.size;
             if (typeof maxMemory === 'number' && bufferTotal > maxMemory) {
                 bufferTotal = 0;
+
                 process.send({message: 'Phased', data: md5List});
                 // 释放内存
-                md5List = [];
+                md5List.length = 0;
             }
         }
 
@@ -49,8 +51,8 @@ process.on('message',
         process.send({message: 'RemainsData', data: md5List});
 
         // 释放内存
-        threadPathList = [];
-        md5List = [];
+        threadPathList.length = 0;
+        md5List.length = 0;
     }
 );
 

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {fdir} = require('fdir');
-const {phasedFileInfoList, fourThreadFileInfoList} = require('./MD5/md5.js');
+const {simpleFileInfoList, phasedFileInfoList, fourThreadFileInfoList} = require('./MD5/md5.js');
 
 const rootPath = path.join(__dirname, '../'.repeat(50));
 const basePath = path.join(rootPath, './SQLiteFileMana');
@@ -52,13 +52,39 @@ async function getFileList(parentPath) {
  *          }
  *      )
  *
- * @param fullPathList      路径数组
- * @param phasedFunc        可不填， 回调函数性能优化选项，传入一个函数
- * @param option
+ */
+
+
+/**
+ *
+ * @param fileList                      文件的绝对路径字符串，数组
+ * @param mode                          运行模式
+ * @param phasedFunc                    可不填，回调函数性能优化选项，传入一个函数
+ * @param progressFunc                  可不填，回调函数性能优化选项，传入一个函数
+ * @param option                        可不填，其他参数
  * @returns {Promise<*[]>}
  */
-async function getFileInfoList(fullPathList, phasedFunc, option, progressFunc) {
-    return await phasedFileInfoList(fullPathList, phasedFunc, option, progressFunc);
+async function getFileInfoList({fileList, mode, phasedFunc, progressFunc, basePath}) {
+    // 初始化化参数
+    fileList = fileList || [];
+    mode = mode || 'phased';
+    phasedFunc = phasedFunc || null;
+    progressFunc = progressFunc || null;
+    basePath = basePath || '';
+
+
+    let fileInfoList = [];
+    switch (mode) {
+        case 'simple':
+            fileInfoList = await simpleFileInfoList({fileList, progressFunc, basePath});
+            break;
+        case 'phased':
+            fileInfoList = await phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath});
+            break;
+        case 'fourThread':
+            fileList = await fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath});
+    }
+    return fileInfoList;
 }
 
 // 获取文件信息：【大小、是否为文件夹、md5】
