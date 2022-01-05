@@ -132,6 +132,15 @@ async function createDirectory(path) {
     }
 }
 
+// 删除文件
+async function deleteFile(path) {
+    try {
+        fs.unlinkSync(path);
+    } catch (e) {
+
+    }
+}
+
 function mkdir(filePath) {
     filePath = filePath.replace(/\\/g, '/');
 
@@ -156,6 +165,7 @@ function mkdir(filePath) {
 
 const FSTool = {
     basePath,
+    deleteFile,
     getPathInfo,
     getFileList,
     getFileInfoList,

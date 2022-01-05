@@ -75,9 +75,9 @@ async function phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath}
 // 开启 4 个进程来计算 文件数组 的 MD5
 async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath}) {
     let coreNum = 4;
-    let mainMaxMemory = 128 << 10;      // 主进程最大的内存限制 ，默认 128MB
+    let mainMaxMemory = 500 << 10;      // 主进程最大的内存限制 ，默认 500MB
     let mainBufferTotal = 0;            // 当前主进程的内存占用量
-    let threadMaxMemory = 32 << 10;     // 子进程最大的内存限制 ，默认 32MB
+    let threadMaxMemory = 200 << 10;     // 子进程最大的内存限制 ，默认 200MB
 
     let allFileCount = fileList.length; // 总进度
     let index = 0;                      // 当前进度
@@ -102,36 +102,8 @@ async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, baseP
                         );
                     }
                         break;
-                    case 'Phased': {
-                        while (reData.data.length) {
-                            let f = reData.data.pop();
-                            f.buffer = Buffer.from(f.buffer.data);
-                            mainBufferTotal += f.size;
-                            md5List.push(f);
-                        }
-
-                        // 超出最大内存了，就把当前这部分的数据弹出进程。
-                        if (typeof phasedFunc === 'function' && mainBufferTotal > mainMaxMemory) {
-                            mainBufferTotal = 0;
-                            phasedFunc(md5List);
-                            // 释放内存
-                            md5List.length = 0;
-                        }
-                    }
-                        break;
-                    case 'RemainsData': {
-                        while (reData.data.length) {
-                            let f = reData.data.pop();
-                            f.buffer = Buffer.from(f.buffer.data);
-                            mainBufferTotal += f.size;
-                            md5List.push(f);
-                        }
-
-                        if (typeof phasedFunc === 'function') {
-                            phasedFunc(md5List);
-                            // 释放内存
-                            md5List.length = 0;
-                        }
+                    case 'Complete': {
+                        console.log('完成线程');
 
                         resolve('End');
                         n.disconnect();

@@ -1,5 +1,36 @@
+const path = require('path');
 const calcFileInfo = require('./calcFileInfo.js');
-const fs = require('fs');
+const sqlite3Promise = require('../../../DBMana/DBTool/sqlite3-promise.js');
+const FSTool = require('../../FSTool.js');
+
+async function openDB(dbName) {
+    const cacheSql = FSTool.readFileSync(path.join(__dirname, 'cache.sql'), 'utf8');
+    const dbPath = FSTool.basePath + '/cache/' + dbName + '.db';
+    await FSTool.deleteFile(dbPath);
+    await sqlite3Promise.open(dbPath);
+    await sqlite3Promise.exec(cacheSql);
+}
+
+async function insertData(fileInfoList) {
+    let fileInfoSql = 'INSERT INTO cache  (fileName, fullPath, relativePath, buffer, md5, file_size) VALUES ( ?, ?, ?, ?, ?, ?)';
+
+    await sqlite3Promise.beginTransaction();
+
+    while (fileInfoList.length > 0) {
+        let fileItem = fileInfoList.pop();
+        await sqlite3Promise.insertData(fileInfoSql, [
+            fileItem.fileName,
+            fileItem.fullPath,
+            fileItem.relativePath,
+            fileItem.buffer,
+            fileItem.md5,
+            fileItem.size
+        ]);
+    }
+
+    await sqlite3Promise.commitTransaction();
+}
+
 /**
  * 子进程，用于计算文件的 MD5 值
  *
@@ -10,6 +41,9 @@ const fs = require('fs');
  */
 process.on('message',
     async function ({threadName, threadPathList, basePath, maxMemory}) {
+
+        await openDB(threadName);
+
         // 最终运行成果，先准备一个空数值
         let md5List = [];
 
@@ -38,7 +72,7 @@ process.on('message',
             if (typeof maxMemory === 'number' && bufferTotal > maxMemory) {
                 bufferTotal = 0;
 
-                process.send({message: 'Phased', data: md5List});
+                await insertData(md5List);
                 // 释放内存
                 md5List.length = 0;
             }
@@ -46,10 +80,11 @@ process.on('message',
 
         // 补足向主进程汇报到 100 %
         process.send({message: 'Progress', data: reportProgress});
-
         //弹出剩余的数据，并结束子进程
-        process.send({message: 'RemainsData', data: md5List});
+        process.send({message: 'Complete', data: []});
 
+        await insertData(md5List);
+        await sqlite3Promise.close();
         // 释放内存
         threadPathList.length = 0;
         md5List.length = 0;
