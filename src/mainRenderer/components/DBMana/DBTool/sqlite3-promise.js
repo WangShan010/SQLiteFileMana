@@ -93,10 +93,10 @@ const db = {
     },
 
 
-    beginTransaction:async function (){
+    beginTransaction: async function () {
         await this.run('BEGIN TRANSACTION;;');
     },
-    commitTransaction:async function (){
+    commitTransaction: async function () {
         await this.run('COMMIT TRANSACTION;');
     },
 
@@ -107,9 +107,9 @@ const db = {
         let that = this;
         return new Promise(function (resolve) {
             that.db.run(sql, tileData, function (e) {
-                resolve(e)
-            })
-        })
+                resolve(e);
+            });
+        });
     }
 };
 

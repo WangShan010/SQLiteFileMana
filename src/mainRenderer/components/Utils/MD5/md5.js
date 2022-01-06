@@ -91,14 +91,18 @@ async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, baseP
         creatThread('线程1', batch1, progressFunc, optionObj),
         creatThread('线程2', batch2, progressFunc, optionObj),
         creatThread('线程3', batch3, progressFunc, optionObj),
-        creatThread('线程4', batch4, progressFunc, optionObj),
+        creatThread('线程4', batch4, progressFunc, optionObj)
     ]);
 
-    md5List = await readThreadCache(App.basePath + '/Cache/线程1.db');
-    console.log(md5List.length);
-    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程2.db'));
-    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程3.db'));
-    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程4.db'));
+    let t1 = await readThreadCache(App.basePath + '/Cache/线程1.db');
+    let t2 = await readThreadCache(App.basePath + '/Cache/线程2.db');
+    let t3 = await readThreadCache(App.basePath + '/Cache/线程3.db');
+    let t4 = await readThreadCache(App.basePath + '/Cache/线程4.db');
+
+    while (t1.length > 0) md5List.push(t1.pop());
+    while (t2.length > 0) md5List.push(t2.pop());
+    while (t3.length > 0) md5List.push(t3.pop());
+    while (t4.length > 0) md5List.push(t4.pop());
 
     return md5List;
 }

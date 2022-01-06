@@ -82,7 +82,7 @@ async function getFileInfoList({fileList, mode, phasedFunc, progressFunc, basePa
             fileInfoList = await phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath});
             break;
         case 'fourThread':
-            fileList = await fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath});
+            fileInfoList = await fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath});
     }
     return fileInfoList;
 }
