@@ -23,7 +23,7 @@ async function test02() {
 
 // 方案二：单线程、内存设阈值的 计算文件信息，避免进程的内存占用量过高
 async function test03() {
-    const dirPath = basePath + '\\FileResources\\MapTile-google';
+    const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\8';
 
     const fileList = await FSTool.getFileList(dirPath);
     let fileInfoList = [];
@@ -43,7 +43,7 @@ async function test03() {
 
 // 方案三：四线程计算文件信息
 async function test04() {
-    const dirPath = basePath + '\\FileResources\\MapTile-google';
+    const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\5';
 
     const fileList = await FSTool.getFileList(dirPath);
     let fileInfoList = [];
@@ -51,8 +51,12 @@ async function test04() {
     await FSTool.getFileInfoList({
         fileList,
         mode: 'fourThread',
-        phasedFunc: function (list) {
-            while (list.length > 0) fileInfoList.push(list.pop());
+        // phasedFunc: function (list) {
+        //     console.log(list);
+        //     while (list.length > 0) fileInfoList.push(list.pop());
+        // },
+        progressFunc: function (e) {
+            console.log(e);
         },
         basePath
     });

@@ -5,7 +5,7 @@ const FSTool = require('../../FSTool.js');
 
 async function openDB(dbName) {
     const cacheSql = FSTool.readFileSync(path.join(__dirname, 'cache.sql'), 'utf8');
-    const dbPath = FSTool.basePath + '/cache/' + dbName + '.db';
+    const dbPath = FSTool.basePath + '/Cache/' + dbName + '.db';
     await FSTool.deleteFile(dbPath);
     await sqlite3Promise.open(dbPath);
     await sqlite3Promise.exec(cacheSql);
@@ -40,7 +40,8 @@ async function insertData(fileInfoList) {
  * maxMemory  内存上限
  */
 process.on('message',
-    async function ({threadName, threadPathList, basePath, maxMemory}) {
+    async function ({threadName, threadPathList, basePath}) {
+        let maxMemory = 200 << 10;     // 子进程最大的内存限制 ，默认 200MB
 
         await openDB(threadName);
 

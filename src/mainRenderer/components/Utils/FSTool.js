@@ -158,6 +158,7 @@ function mkdir(filePath) {
 
 (async function init() {
     await createFile(basePath + '/日志.txt', '初始化成功\n');
+    await createDirectory(basePath + '/Cache/');
     await createDirectory(basePath + '/FileResources/');
     await createDirectory(basePath + '/MapDB/');
     await createDirectory(basePath + '/OutFile/');

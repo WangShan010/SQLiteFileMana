@@ -1,5 +1,7 @@
 const fs = require('fs');
-let cp = require('child_process');
+const cp = require('child_process');
+const sqlite3Promise = require('../../DBMana/DBTool/sqlite3-promise.js');
+const App = require('../FSTool/AppTool.js');
 
 const calcFileInfo = require('./lib/calcFileInfo.js');
 
@@ -72,65 +74,72 @@ async function phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath}
     return md5List;
 }
 
-// 开启 4 个进程来计算 文件数组 的 MD5
+// 开启 4 个进程来并行计算 文件数组 的 MD5
 async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath}) {
-    let coreNum = 4;
-    let mainMaxMemory = 500 << 10;      // 主进程最大的内存限制 ，默认 500MB
-    let mainBufferTotal = 0;            // 当前主进程的内存占用量
-    let threadMaxMemory = 200 << 10;     // 子进程最大的内存限制 ，默认 200MB
+    // 最终运行成果，先准备一个空数值
+    let md5List = [];
 
-    let allFileCount = fileList.length; // 总进度
-    let index = 0;                      // 当前进度
-    let md5List = [];                   // 最终成果
+    let optionObj = {
+        basePath,
+        index: 0,
+        progressLength: fileList.length
+    };
 
-    // 创建计算 MD5 的进程
-    function creatThread(threadName, threadPathList) {
-        return new Promise(function (resolve) {
-            // 创建子进程
-            let n = cp.fork(__dirname + '/lib/threadMd5.js');
+    // 开启多线程解析文件列表，将解析成果暂时放入 缓存文件中
+    let [batch1, batch2, batch3, batch4] = group(fileList, 4);
+    await Promise.all([
+        creatThread('线程1', batch1, progressFunc, optionObj),
+        creatThread('线程2', batch2, progressFunc, optionObj),
+        creatThread('线程3', batch3, progressFunc, optionObj),
+        creatThread('线程4', batch4, progressFunc, optionObj),
+    ]);
 
-            // 向子进程发送数据
-            n.send({threadName, threadPathList, basePath, maxMemory: threadMaxMemory});
-
-            n.on('message', function (reData) {
-                let message = reData.message;
-                switch (message) {
-                    case 'Progress': {
-                        index += reData.data;
-                        typeof progressFunc === 'function' && progressFunc(
-                            {description: '【开启 4 进程扫描 MD5】', completed: index, total: allFileCount}
-                        );
-                    }
-                        break;
-                    case 'Complete': {
-                        console.log('完成线程');
-
-                        resolve('End');
-                        n.disconnect();
-                    }
-                }
-            });
-
-        });
-    }
-
-    // 把总任务，平分给每一个字进程
-    let batchFileList = group(fileList, coreNum);
-
-    // 创建进程
-    let threadList = [];
-    for (let i = 0; i < coreNum; i++) {
-        let thread = creatThread(String(i), batchFileList[i]);
-        threadList.push(thread);
-    }
-    fileList.length = 0;
-    batchFileList.length = 0;
-
-    // 等待全部的进程完成工作
-    await Promise.all(threadList);
+    md5List = await readThreadCache(App.basePath + '/Cache/线程1.db');
+    console.log(md5List.length);
+    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程2.db'));
+    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程3.db'));
+    // md5List.concat(await readThreadCache(App.basePath + '/Cache/线程4.db'));
 
     return md5List;
 }
+
+
+// 创建计算 MD5 的进程
+function creatThread(threadName, threadPathList, progressFunc, optionObj = {}) {
+    return new Promise(function (resolve) {
+        // 创建子进程
+        let n = cp.fork(__dirname + '/lib/threadMd5.js');
+
+        // 向子进程发送数据
+        n.send({threadName, threadPathList, basePath: optionObj.basePath});
+
+        n.on('message', function (reData) {
+            let message = reData.message;
+            switch (message) {
+                case 'Progress': {
+                    optionObj.index += reData.data;
+                    typeof progressFunc === 'function' && progressFunc(
+                        {description: '【开启 4 进程扫描 MD5】', completed: optionObj.index, total: optionObj.progressLength}
+                    );
+                }
+                    break;
+                case 'Complete': {
+                    resolve('Complete');
+                    n.disconnect();
+                }
+            }
+        });
+    });
+}
+
+// 读取线程缓存数据
+async function readThreadCache(path) {
+    await sqlite3Promise.open(path);
+    const list = await sqlite3Promise.all('select * from cache');
+    await sqlite3Promise.close();
+    return list;
+}
+
 
 // 计算文件的 MD5 值
 async function fileMd5(path) {
@@ -162,19 +171,6 @@ function group(array, subNum) {
     }
 
     return newArray;
-}
-
-// 封装了 fs 读取文件二进制数据的函数
-async function readFile(path) {
-    return new Promise(function (resolve) {
-        fs.readFile(path, function (error, date) {
-            //读取文件，回调函数第一个参数表示错误信息，第二个参数为读取的文本内容
-            if (error) {
-                console.log(error);
-            }
-            resolve(error ? Buffer.from('') : date);
-        });
-    });
 }
 
 
