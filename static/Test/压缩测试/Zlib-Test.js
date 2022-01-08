@@ -1,4 +1,4 @@
-const zlibPromise = require('../../../src/mainRenderer/components/Utils/gzip.js');
+const zlibPromise = require('../../../src/mainRenderer/components/Lib/FSTool/gzip.js');
 const treeJson = require('./0.json');
 const fs = require('fs');
 

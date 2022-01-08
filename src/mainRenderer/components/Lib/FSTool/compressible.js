@@ -2,7 +2,7 @@
 const path = require("path");
 
 // 判断文件是否适合进行压缩，
-function Compressible(filePath) {
+function compressible(filePath) {
     let ext = path.extname(filePath).toLowerCase();
     let boolean = true; // 可压缩
 
@@ -19,4 +19,4 @@ function Compressible(filePath) {
     return boolean;
 }
 
-module.exports = Compressible;
+module.exports = compressible;

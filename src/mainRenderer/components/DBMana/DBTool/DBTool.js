@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const sqlite3Promise = require('./sqlite3-promise.js');
-const FSTool = require('../../Lib/FSTool/FSTool.js');
-const zlibPromise = require('../../Utils/gzip.js');
-const Compressible = require('../../Utils/Compressible.js');
+const FSTool = require('../../Lib/FSTool/index.js');
+const zlibPromise = require('../../Lib/FSTool/gzip.js');
+const compressible = require('../../Lib/FSTool/compressible.js');
 
 
 class DBTool {
@@ -82,7 +82,7 @@ class DBTool {
             let buffer = fileItem.buffer;
             let compressType = '';
             // 压缩二进制流
-            if (Compressible(fileItem.fullPath)) {
+            if (compressible(fileItem.fullPath)) {
                 buffer = await zlibPromise.zip(buffer);
                 compressType = 'gzip';
             }

@@ -12,7 +12,7 @@
  */
 
 
-const {simpleFileInfoList, phasedFileInfoList, fourThreadFileInfoList} = require('../../Utils/MD5/md5.js');
+const {simpleFileInfoList, phasedFileInfoList, fourThreadFileInfoList} = require('../MD5/md5.js');
 
 /**
  * 传入一组 【文件绝对路径】的数组，把全部文件的 Buffer 都读取出来，同时计算出其 MD5等信息

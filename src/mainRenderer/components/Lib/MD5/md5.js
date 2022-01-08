@@ -1,8 +1,8 @@
 const fs = require('fs');
 const cp = require('child_process');
 const sqlite3Promise = require('../../DBMana/DBTool/sqlite3-promise.js');
-const appBasePath = require('../../Lib/appBasePath.js');
-const deleteFile = require('../../Lib/FSTool/deleteFile.js');
+const appBasePath = require('../appBasePath.js');
+const deleteFile = require('../FSTool/deleteFile.js');
 const calcFileInfo = require('./lib/calcFileInfo.js');
 
 // 单进程计算 文件数组 的 MD5

@@ -1,7 +1,7 @@
 const path = require('path');
 const calcFileInfo = require('./calcFileInfo.js');
 const sqlite3Promise = require('../../../DBMana/DBTool/sqlite3-promise.js');
-const FSTool = require('../../../Lib/FSTool/index.js');
+const FSTool = require('../../FSTool');
 
 async function openDB(dbName) {
     const cacheSql = FSTool.readFileSync(path.join(__dirname, 'cache.sql'), 'utf8');
