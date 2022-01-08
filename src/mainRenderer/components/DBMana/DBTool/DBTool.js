@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const sqlite3Promise = require('./sqlite3-promise.js');
-const FSTool = require('../../Utils/FSTool.js');
+const FSTool = require('../../Lib/FSTool/FSTool.js');
 const zlibPromise = require('../../Utils/gzip.js');
 const Compressible = require('../../Utils/Compressible.js');
 

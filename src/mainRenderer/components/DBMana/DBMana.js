@@ -4,7 +4,7 @@
  描述：管理可用的资源库
  最后修改日期：2021-12-05
  ****************************************************************************/
-const FSTool = require('../Utils/FSTool.js');
+const FSTool = require('../Lib/FSTool/FSTool.js');
 const DBTool = require('./DBTool/DBTool.js');
 const webSocketTool = require('../WebServer/webSocketTool/webSocketTool.js');
 const Path = require('path');

@@ -1,8 +1,8 @@
 const fs = require('fs');
 const cp = require('child_process');
 const sqlite3Promise = require('../../DBMana/DBTool/sqlite3-promise.js');
-const App = require('../FSTool/AppTool.js');
-
+const appBasePath = require('../../Lib/appBasePath.js');
+const deleteFile = require('../../Lib/FSTool/deleteFile.js');
 const calcFileInfo = require('./lib/calcFileInfo.js');
 
 // 单进程计算 文件数组 的 MD5
@@ -76,6 +76,7 @@ async function phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath}
 
 // 开启 4 个进程来并行计算 文件数组 的 MD5
 async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath}) {
+    deleteCache();
     // 最终运行成果，先准备一个空数值
     let md5List = [];
 
@@ -94,16 +95,17 @@ async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, baseP
         creatThread('线程4', batch4, progressFunc, optionObj)
     ]);
 
-    let t1 = await readThreadCache(App.basePath + '/Cache/线程1.db');
-    let t2 = await readThreadCache(App.basePath + '/Cache/线程2.db');
-    let t3 = await readThreadCache(App.basePath + '/Cache/线程3.db');
-    let t4 = await readThreadCache(App.basePath + '/Cache/线程4.db');
+    let t1 = await readThreadCache(appBasePath + '/Cache/线程1.db');
+    let t2 = await readThreadCache(appBasePath + '/Cache/线程2.db');
+    let t3 = await readThreadCache(appBasePath + '/Cache/线程3.db');
+    let t4 = await readThreadCache(appBasePath + '/Cache/线程4.db');
 
     while (t1.length > 0) md5List.push(t1.pop());
     while (t2.length > 0) md5List.push(t2.pop());
     while (t3.length > 0) md5List.push(t3.pop());
     while (t4.length > 0) md5List.push(t4.pop());
 
+    deleteCache();
     return md5List;
 }
 
@@ -134,6 +136,13 @@ function creatThread(threadName, threadPathList, progressFunc, optionObj = {}) {
             }
         });
     });
+}
+
+function deleteCache() {
+    deleteFile(appBasePath + '/Cache/线程1.db');
+    deleteFile(appBasePath + '/Cache/线程2.db');
+    deleteFile(appBasePath + '/Cache/线程3.db');
+    deleteFile(appBasePath + '/Cache/线程4.db');
 }
 
 // 读取线程缓存数据

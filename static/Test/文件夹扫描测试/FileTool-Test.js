@@ -1,4 +1,4 @@
-const FSTool = require('../../../src/mainRenderer/components/Utils/FSTool.js');
+const FSTool = require('../../../src/mainRenderer/components/Lib/FSTool/index.js');
 
 // 应用基本路径，例如：D:\SQLiteFileMana
 const basePath = FSTool.basePath;
@@ -11,7 +11,7 @@ async function test01() {
     console.log(Buffer.from(JSON.stringify(fileList)).length / 1024 / 1024, 'MB');
 }
 
-// 131,584 个文件，耗时：【41s，30s，30s】
+// 131,584 个文件，耗时：【31s，30s，30s】
 // 方案一、最简单的单线程计算文件信息，
 async function test02() {
     const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\8';
@@ -29,7 +29,7 @@ async function test02() {
 // 131,584 个文件，耗时：【19s，18s，18s】
 // 方案二：单线程、内存设阈值的 计算文件信息，避免进程的内存占用量过高
 async function test03() {
-    const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\9';
+    const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\8';
 
     const fileList = await FSTool.getFileList(dirPath);
     let fileInfoList = [];
@@ -54,7 +54,7 @@ async function test03() {
 // 525,312 个文件，耗时：【90s】
 // 方案三：四线程计算文件信息
 async function test04() {
-    const dirPath = basePath + '\\FileResources\\DEM-wordHeights\\8';
+    const dirPath =  'D:\\VGEServer\\vge-software-resources\\jiaxing\\DOM';
 
     const fileList = await FSTool.getFileList(dirPath);
     const fileInfoList = await FSTool.getFileInfoList({
