@@ -30,7 +30,7 @@ async function phasedFileInfoList({fileList, phasedFunc, progressFunc, basePath}
 
     let allFileListCount = fileList.length; // 总进度
     let index = 0;                      // 当前进度
-    let ProgressNumber = 50;    // 避免过度频繁的通信
+    let ProgressNumber = Math.floor(allFileListCount / 10);    // 避免过度频繁的通信
     let reportProgress = 0;     // 计数标识符
 
     // 最终运行成果，先准备一个空数值
@@ -96,14 +96,21 @@ async function fourThreadFileInfoList({fileList, phasedFunc, progressFunc, baseP
     ]);
 
     let t1 = await readThreadCache(appBasePath + '/Cache/线程1.db');
-    let t2 = await readThreadCache(appBasePath + '/Cache/线程2.db');
-    let t3 = await readThreadCache(appBasePath + '/Cache/线程3.db');
-    let t4 = await readThreadCache(appBasePath + '/Cache/线程4.db');
-
+    typeof phasedFunc === 'function' && await phasedFunc(t1);
     while (t1.length > 0) md5List.push(t1.pop());
+
+    let t2 = await readThreadCache(appBasePath + '/Cache/线程2.db');
+    typeof phasedFunc === 'function' && await phasedFunc(t2);
     while (t2.length > 0) md5List.push(t2.pop());
+
+    let t3 = await readThreadCache(appBasePath + '/Cache/线程3.db');
+    typeof phasedFunc === 'function' && await phasedFunc(t3);
     while (t3.length > 0) md5List.push(t3.pop());
+
+    let t4 = await readThreadCache(appBasePath + '/Cache/线程4.db');
+    typeof phasedFunc === 'function' && await phasedFunc(t4);
     while (t4.length > 0) md5List.push(t4.pop());
+
 
     deleteCache();
     return md5List;

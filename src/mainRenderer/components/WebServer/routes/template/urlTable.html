@@ -64,11 +64,11 @@
     let str = '';
 
     fileList.paths.forEach(function (item, index) {
-        let nextUrl = `${baseUrl}?DBName=${fileList.DBName}&path=${item.file_path_location}`;
+        let nextUrl = `${baseUrl}?DBName=${fileList.DBName}&path=${item.file_path}`;
         str += `<tr>
                     <td>${index}</td>
                     <td>${item['ext']}</td>
-                    <td>${item['file_path_location']}</td>
+                    <td>${item['file_path']}</td>
                     <td><a href="${nextUrl}">链接</a></td>
                 </tr>`;
     });

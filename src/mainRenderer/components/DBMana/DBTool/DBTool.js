@@ -33,47 +33,31 @@ class DBTool {
 
         // 扫描完成的文件列表
         let completeInfoList = [];
+        let threadIndex = 0;
 
-        // 先开并行取出 60% 的数据列表
-        let p1 = FSTool.getFileInfoList(fileList.splice(0, Math.abs(unitObject.count / 10)),
-            async function (phasedInfoList) {
+        await FSTool.getFileInfoList({
+            fileList,
+            progressFunc,
+            phasedFunc: async function (phasedInfoList) {
                 while (phasedInfoList.length > 0) {
                     completeInfoList.push(phasedInfoList.pop());
                 }
-            },
-            {basePath: basePath, log: false}
-        );
-        let p2 = FSTool.getFileInfoList(fileList.splice(0, Math.abs(unitObject.count / 10 * 5)),
-            async function (phasedInfoList) {
-                while (phasedInfoList.length > 0) {
-                    completeInfoList.push(phasedInfoList.pop());
-                }
-            },
-            {basePath: basePath, log: false}
-        );
-
-
-        // 已经查询好的文件实体列表，可以直接进行数据库插入操作
-        await FSTool.getFileInfoList(fileList,
-            async function (phasedInfoList) {
-                while (phasedInfoList.length > 0) {
-                    completeInfoList.push(phasedInfoList.pop());
-                }
-
                 await that.insertData(completeInfoList, unitObject);
+                threadIndex++;
+                // typeof progressFunc === 'function' && progressFunc({description: '线程工作成果保存，', completed: threadIndex, total: 4});
             },
-            {basePath: basePath, log: true}
-        );
-
-        await Promise.all([p1, p2]);
-
+            basePath: basePath
+        });
     };
 
     insertData = async function (completeInfoList, option) {
         await sqlite3Promise.open(this.fullPath);
-        let fileInfoSql = 'INSERT INTO file_info  (file_name, file_full_path, file_path_location, file_zip, file_size, file_md5) VALUES ( ?, ?, ?, ?, ?, ?)';
+        let fileInfoSql = 'INSERT INTO file_info  (file_name, file_path, file_zip, file_size, file_md5) VALUES ( ?, ?, ?, ?, ?)';
 
         let fileDataSql = 'INSERT INTO file_data (file_md5, file_data) VALUES (?, ?)';
+
+        let ProgressNumber = Math.floor(completeInfoList.length / 10);    // 避免过度频繁的通信
+        let reportProgress = 0;     // 计数标识符
 
         await sqlite3Promise.beginTransaction();
 
@@ -88,7 +72,6 @@ class DBTool {
             }
             await sqlite3Promise.insertData(fileInfoSql, [
                 fileItem.fileName,
-                fileItem.relativePath,
                 fileItem.relativePath.replace(fileItem.fileName, ''),
                 compressType,
                 fileItem.size,
@@ -96,9 +79,14 @@ class DBTool {
             ]);
             await sqlite3Promise.insertData(fileDataSql, [fileItem.md5, buffer]);
             option.index++;
-            typeof option.progressFunc === 'function' && option.progressFunc(
-                {description: '磁盘文件导入数据库进度', completed: option.index, total: option.count}
-            );
+
+            reportProgress++;
+            if (reportProgress === ProgressNumber) {
+                reportProgress = 0;
+                typeof option.progressFunc === 'function' && option.progressFunc(
+                    {description: '磁盘文件导入数据库进度', completed: option.index, total: option.count}
+                );
+            }
         }
 
         await sqlite3Promise.commitTransaction();
@@ -134,10 +122,10 @@ class DBTool {
     // 获取目录的树状图结构
     getPathList = async function () {
         await sqlite3Promise.open(this.fullPath);
-        const listObj = await sqlite3Promise.all('select distinct file_path_location from file_info');
+        const listObj = await sqlite3Promise.all('select distinct file_path from file_info');
         await sqlite3Promise.close();
         const list = [];
-        listObj.forEach(e => list.push(e['file_path_location']));
+        listObj.forEach(e => list.push(e['file_path']));
 
         return list;
     };
@@ -145,15 +133,17 @@ class DBTool {
     // 根据目录获取文件
     getFileListByPath = async function (path) {
         await sqlite3Promise.open(this.fullPath);
-        const list = await sqlite3Promise.all('select *  from file_info where file_path_location = ?', [path]);
+        const list = await sqlite3Promise.all('select *  from file_info where file_path = ?', [path]);
         await sqlite3Promise.close();
         return list;
     };
 
     // 读取文件
-    getFileByFullPath = async function (path) {
+    getFileByFullPath = async function (filePath) {
+        let fileName = path.basename(filePath);
+        let dirPath = path.dirname(filePath);
         await sqlite3Promise.open(this.fullPath);
-        const list = await sqlite3Promise.all('select *  from file_list where file_full_path = ?', [path]);
+        const list = await sqlite3Promise.all('select *  from file_list where file_path = ? and file_name = ?', [fileName, dirPath]);
         await sqlite3Promise.close();
         return list;
     };

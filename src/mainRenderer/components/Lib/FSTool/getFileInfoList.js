@@ -26,11 +26,10 @@ const {simpleFileInfoList, phasedFileInfoList, fourThreadFileInfoList} = require
 async function getFileInfoList({fileList, mode, phasedFunc, progressFunc, basePath}) {
     // 初始化化参数
     fileList = fileList || [];
-    mode = mode || 'phased';
+    mode = fileList.length < 10000 ? 'phased' : 'fourThread';
     phasedFunc = phasedFunc || null;
     progressFunc = progressFunc || null;
     basePath = basePath || '';
-
 
     let fileInfoList = [];
     switch (mode) {
@@ -42,6 +41,7 @@ async function getFileInfoList({fileList, mode, phasedFunc, progressFunc, basePa
             break;
         case 'fourThread':
             fileInfoList = await fourThreadFileInfoList({fileList, phasedFunc, progressFunc, basePath});
+            break;
     }
     return fileInfoList;
 }

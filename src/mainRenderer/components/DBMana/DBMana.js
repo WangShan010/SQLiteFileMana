@@ -4,7 +4,7 @@
  描述：管理可用的资源库
  最后修改日期：2021-12-05
  ****************************************************************************/
-const FSTool = require('../Lib/FSTool/FSTool.js');
+const FSTool = require('../Lib/FSTool/index.js');
 const DBTool = require('./DBTool/DBTool.js');
 const webSocketTool = require('../WebServer/webSocketTool/webSocketTool.js');
 const Path = require('path');
@@ -50,12 +50,12 @@ DBMana.getDBList = async function () {
         let size = info.size;
         let sizeFormat = null;
 
-        if (size < 1000) {
+        if (size < 1024) {
             sizeFormat = size + 'KB';
-        } else if (size < 1000000) {
-            sizeFormat = (size / 1000).toFixed(2) + 'MB';
-        } else if (size < 1000000000) {
-            sizeFormat = (size / 1000000).toFixed(2) + 'GB';
+        } else if (size < 1024 * 1024) {
+            sizeFormat = (size / 1024).toFixed(2) + 'MB';
+        } else if (size < 1024 * 1024 * 1024) {
+            sizeFormat = (size / 1024 / 1024).toFixed(2) + 'GB';
         }
 
         extName === '.sqlite3' && fileInfoList.push({id: i, fileName, path, size, sizeFormat});
@@ -94,7 +94,6 @@ DBMana.createDB = async function (DBName, targetDirectory) {
         res = true;
     }
 
-    console.log(DBFileInfo, DBFilePath);
     return res;
 };
 
@@ -188,7 +187,7 @@ DBMana.getFileListByPath = async function (DBName, path) {
                 itemFolder.push({
                     ext: 'directory',
                     file_name: childPath,
-                    file_path_location: path + childPath + '\\'
+                    file_path: path + childPath + '\\'
                 });
             }
         }
@@ -221,15 +220,6 @@ DBMana.getFileByMd5 = async function (DBName, MD5) {
     let fileList = await dbToll.getFileByMd5(MD5);
     return fileList.pop();
 };
-
-
-// DBMana.getFileListByPath('MapTile-google', '\\0\\0\\0.png').then(e => console.log(e));
-// DBMana.getFileByFullPath('MapTile-google', '\\3\\7\\4.png').then(e => console.log(e));
-// DBMana.createDB('设施','D:\\GisFileMana\\FileResources\\MapTile-google')
-// DBMana.getDBPathTree('MapTile-google').then(e => console.log(e));
-// DBMana.getFileByMd5('MapTile-google', '69e4fb43d28bf4e9e874a9d90330237a').then(e => console.log(e));
-// DBMana.getFileByFullPath('MapTile-google', '\\3\\7\\4.png').then(e => console.log(e));
-// DBMana.exportDB('MapTile-google', 'C:\\Users\\23948\\Desktop\\30天临时文件夹').then(e => console.log(e));
 
 
 module.exports = DBMana;

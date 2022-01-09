@@ -93,8 +93,8 @@
                 <th width="250">MD5</th>
               </tr>
               <tr class="winActive" v-for="item in fileList"
-                  @click="chooseFile(item)" @dblclick="inFolder(item.file_path_location)"
-                  :class="{'select':item.file_path_location===selPath && item.file_name===selFileName}"
+                  @click="chooseFile(item)" @dblclick="inFolder(item.file_path)"
+                  :class="{'select':item.file_path===selPath && item.file_name===selFileName}"
               >
                 <td>
                   <img v-if="item.ext==='directory'" src="../../../assets/fileMana/fileType/directory.png" width="20">
@@ -377,9 +377,9 @@ export default {
       this.pathTree = await API.getDBPathTree(DBName);
       console.log('目录树', this.pathTree);
     },
-    // 淡季文件，进行选取
+    // 单机文件，进行选取
     async chooseFile(e) {
-      this.selPath = e.file_path_location;
+      this.selPath = e.file_path;
       this.selFileName = e.file_name;
       this.selFilePath = e.file_full_path;
       if (this.selFilePath) {

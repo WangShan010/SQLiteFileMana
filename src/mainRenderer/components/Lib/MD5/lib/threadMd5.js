@@ -53,7 +53,7 @@ process.on('message',
         let md5List = [];
 
         // 每计算出 ProgressNumber 个文件的详细信息，就向主进程汇报一次进度
-        let ProgressNumber = 100;    // 避免过度频繁的 主进程-子进程 通信
+        let ProgressNumber = Math.floor(threadPathList.length / 10);    // 避免过度频繁的 主进程-子进程 通信
         let reportProgress = 0;     // 计数标识符
         let bufferTotal = 0;        // 累积使用的，内存计数
         let count = threadPathList.length;  // 全部需要运算的【文件路径列表】长度
