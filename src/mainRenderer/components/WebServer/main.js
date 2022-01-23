@@ -45,6 +45,5 @@ const DBWebServer = {
     }
 };
 
-DBWebServer.run();
 
 module.exports = DBWebServer;
