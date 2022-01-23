@@ -6,7 +6,7 @@
 
 | 信息     | 描述                                       |
 | -------- | ------------------------------------------ |
-| 国内镜像 | https://gitee.com/fyaoyao/SQLite-File-Mana |
+| 国内镜像 | https://gitee.com/WangShan010/SQLiteFileMana.git |
 | GitHub   | 暂无                                       |
 | 最新版本 | V1.4	2021年12月19日                     |
 | 交流群   | QQ交流群：783844344                        |
