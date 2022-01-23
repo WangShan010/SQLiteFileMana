@@ -12,7 +12,7 @@
     "type": "git",
     "url": "https://gitee.com/fyaoyao/SQLite-File-Mana.git"
   },
-  "author": "冯功耀",
+  "author": "望山010",
   "license": "ISC",
   "dependencies": {
     "@mapbox/mbtiles": "^0.12.1",
