@@ -1,0 +1,37 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "./src/index.js",
+  "scripts": {
+    "build": "pkg ."
+  },
+  "pkg": {
+    "targets": [
+      "node16-linux-x64",
+      "node16-macos-x64",
+      "node16-win-x64"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mapbox/mbtiles": "^0.12.1",
+    "body-parser": "^1.19.2",
+    "compression": "^1.7.4",
+    "express": "^4.17.3",
+    "express-static": "^1.2.6",
+    "fdir": "^5.1.0",
+    "fs-promise": "^2.0.3",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-compress": "^5.1.0",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa2-cors": "^2.0.6",
+    "node-cmd": "^5.0.0",
+    "opn": "^6.0.0",
+    "sqlite3": "^5.0.2",
+    "ws": "^8.3.0"
+  }
+}
