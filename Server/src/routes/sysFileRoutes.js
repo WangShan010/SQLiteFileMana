@@ -7,8 +7,8 @@
 
 
 const router = require('koa-router');
-const DBMana = require('../DBMana/DBMana.js');
-const FileSystem = require('../FileSystem/FileSystem.js');
+const DBMana = require('../com/DBMana/DBMana.js');
+const FileSystem = require('../com/FileSystem/FileSystem.js');
 
 
 const sysFileRoutes = new router({prefix: '/sysFile'});

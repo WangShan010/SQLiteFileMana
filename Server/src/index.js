@@ -1,46 +1,23 @@
 const opn = require('opn');
-const path = require('path');
 const Koa = require('koa');
-const cors = require('koa2-cors');
-const compress = require('koa-compress');
-const bodyParser = require('koa-bodyparser');
-const router = require('koa-router')();
-const koaStatic = require('koa-static');
 const WebSocket = require('ws');
-const configTool = require('./Lib/configTool.js');
-
-
-const webSocketTool = require('./webSocketTool/webSocketTool.js');
-const appFileRoutes = require('./routes/appFileRoutes.js');
-const sysFileRoutes = require('./routes/sysFileRoutes.js');
-const microService = require('./routes/microService.js');
+const configTool = require('./lib/configTool.js');
+const loadMiddleWare = require('./middleware/index.js');
+const webSocketTool = require('./com/webSocketTool/webSocketTool.js');
 
 const app = new Koa();
 
 async function main() {
-    await configTool.init();
+    // 载入中间件
+    loadMiddleWare(app);
 
-    const config = await configTool.config;
-    const port = config.port;
-
-    app.use(cors());
-    app.use(compress());
-    app.use(bodyParser());
-    app.use(router.routes());
-    app.use(koaStatic(path.join(configTool.appBasePath, config.webSite)));
-
-
-    app.use(appFileRoutes.routes());
-    app.use(sysFileRoutes.routes());
-    app.use(microService.routes());
-
+    const port = configTool.config.port;
     let server = app.listen(port, function () {
         console.log(`【静态资源目录】 ： wwwPath`);
         console.log(`【启动Web服务器】： http://localhost:${port}`);
-        console.log(`【系统配置文件】 ：`, config);
-        // opn(`http://localhost:${port}`).then();
+        console.log(`【系统配置文件】 ：`, configTool.config);
+        opn(`http://localhost:${port}`).then();
     });
-
 
     // 同一个端口，开启 WebSocket 服务
     const wss = new WebSocket.Server({server});

@@ -6,9 +6,9 @@
  ****************************************************************************/
 
 const router = require('koa-router');
-const DBMana = require('../DBMana/DBMana.js');
-const FileSystem = require('../FileSystem/FileSystem.js');
-const FSTool = require('../Lib/FSTool/index.js');
+const DBMana = require('../com/DBMana/DBMana.js');
+const FileSystem = require('../com/FileSystem/FileSystem.js');
+const FSTool = require('../lib/FSTool/index.js');
 const microService = new router({prefix: '/microService'});
 
 const DBService = new Set();

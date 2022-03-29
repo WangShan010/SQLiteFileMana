@@ -1,0 +1,8 @@
+node_modules/
+.idea/
+
+db/
+temp/
+/app-linux
+/app-win.exe
+/app-macos

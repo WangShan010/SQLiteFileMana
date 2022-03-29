@@ -7,7 +7,7 @@
 
 const router = require('koa-router');
 
-const DBMana = require('../DBMana/DBMana.js');
+const DBMana = require('../com/DBMana/DBMana.js');
 
 const appFileRoutes = new router({prefix: '/appFile'});
 
