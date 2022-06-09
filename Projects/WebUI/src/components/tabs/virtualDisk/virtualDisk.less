@@ -1,0 +1,95 @@
+.el-col {
+  height: calc(100% - 60px);
+}
+
+.thumbnail {
+  padding: 0;
+}
+
+
+.comMain {
+  height: calc(100% - 2px);
+}
+
+
+.pathNav {
+  height: 35px;
+  margin: 8px 0;
+
+  .pathBox {
+    border: 1px silver solid;
+    position: absolute;
+    left: 5px;
+    top: 9px;
+    height: 30px;
+    width: calc(100% - 230px);
+    margin-top: -2px;
+    border-radius: 2px;
+
+    #pathRoot {
+      padding-top: 3px;
+
+      img {
+        height: 19px;
+        width: 19px;
+      }
+    }
+
+    .pathItem {
+      display: inline-block;
+      line-height: 21px;
+      padding: 1px 1px;
+      height: 100%;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: 12px;
+    }
+
+    #pathList {
+      display: inline-block;
+      line-height: 22px
+    }
+
+    .pathTool {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 12px;
+      vertical-align: center;
+      text-align: center
+    }
+  }
+
+  .pathSearch {
+    position: absolute;
+    width: 200px;
+    top: 6px;
+    right: 6px;
+
+    input {
+      height: 30px;
+    }
+  }
+}
+
+
+.fileExplorer {
+  height: calc(100% - 20px);
+  margin-top: 6px;
+
+
+  .explorer-content {
+    border-left: 1px rgba(192, 192, 192, 0.42) solid;
+    border-right: 1px rgba(192, 192, 192, 0.42) solid;
+  }
+
+  .diskList {
+    display: inline-block;
+    width: 100%;
+    height: calc(100%);
+    padding: 2px;
+  }
+}
+
+

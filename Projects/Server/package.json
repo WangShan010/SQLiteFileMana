@@ -1,0 +1,36 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "bin": "./src/index.js",
+  "scripts": {
+    "dev": "node ./src/index.js",
+    "build": "pkg . --out-path=../../Release/Server-win-x64"
+  },
+  "pkg": {
+    "targets": [
+      "node16-win-x64"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@turf/turf": "^6.5.0",
+    "axios": "^0.27.2",
+    "fdir": "^5.2.0",
+    "fs-promise": "^2.0.3",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-compress": "^5.1.0",
+    "koa-mount": "^4.0.0",
+    "koa-proxy-middleware": "^2.0.2",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa2-cors": "^2.0.6",
+    "lodash": "^4.17.21",
+    "node-rsa": "^1.1.1",
+    "sqlite3": "^5.0.8",
+    "ws": "^8.6.0"
+  }
+}
