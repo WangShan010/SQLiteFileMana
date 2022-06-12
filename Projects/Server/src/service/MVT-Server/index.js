@@ -1,11 +1,11 @@
 const {VectorTileController} = require('./controller/VectorTileController.js');
 
-// const db = require('../HN-pgSqlAPI/Core/dbConnect.js');
+// const db = require('../pgSqlAPI/Core/dbConnect.js');
 
 // async function test () {
 //   const vec = new VectorTileController(db);
 //   const tile = await vec.getMVT({
-//     layerPickName: '三调数据',
+//     layerPickName: '矢量数据',
 //     type: 'bound',
 //     table: 'basic_map.polygon_shi',
 //     z: 6,

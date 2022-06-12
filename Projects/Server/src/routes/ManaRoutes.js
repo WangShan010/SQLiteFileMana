@@ -6,7 +6,8 @@ const FSTool = require('../lib/FSTool/index.js');
 const {openDB, closeAll} = require('../com/DBTool/DBConnectTool.js');
 const path = require('path');
 const ManageRoutes = new router({prefix: '/manage'});
-
+const WinUIAuth = require('../com/WinUIAuth.js');
+const RSATool = require('../lib/RSATool.js');
 
 ManageRoutes
     .get('/getServerInfo', async (ctx, next) => {
@@ -126,7 +127,11 @@ ManageRoutes
             ctx.status = 404;
         }
     })
+    .get('/authorize', async (ctx, next) => {
+        ctx.set('Content-Type', 'application/json;charset=utf-8');
+        let autoTxt = JSON.stringify({version: 'v1.3', user: 'Public'});
+        ctx.body = JSON.stringify({auth: RSATool.encrypt(autoTxt, WinUIAuth)});
+    })
 ;
-
 
 module.exports = ManageRoutes;

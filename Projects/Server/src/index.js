@@ -21,7 +21,7 @@ async function main() {
     const clientServer = clientAPP.listen(clientServerPort, function () {
         console.log(`【启动Web服务器】：URL:【http://localhost:${clientServerPort}】，磁盘路径：【${configTool.wwwPath}】`);
         clientMiddleWare(clientAPP);
-        console.log(`========================服务器启动成功！========================`);
+        console.log(`================== 服务器启动成功！当前版本：V1.3 ==================`);
     });
 
 

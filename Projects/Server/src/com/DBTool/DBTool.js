@@ -3,7 +3,7 @@ const path = require('path');
 const lodash = require('lodash');
 const configTool = require('../configTool.js');
 const Sqlite3Promise = require('./Sqlite3Promise.js');
-const FSTool = require('../../lib/FSTool');
+const FSTool = require('../../lib/FSTool/index.js');
 const zlibPromise = require('../../lib/FSTool/gzip.js');
 const awaitWrap = require('../../lib/awaitWrap.js');
 const ProgressBar = require('../ProgressBar/ProgressBar.js');
@@ -15,6 +15,7 @@ class DBTool {
         let that = this;
         that.dbName = name;
         that.fileName = name + '.sqlite3';
+        that.pathInfoList = [];
     }
 
     // 判断该数据库是否存在
@@ -54,7 +55,11 @@ class DBTool {
             if (extName === '.sqlite3') {
                 let dbTool = new DBTool(fileName);
                 let mataData = await dbTool.getMataData();
-                mataData.fileCount = await dbTool.getFileCount();
+                mataData.fileCount = await dbTool.getMataData().then(data => data.fileCount);
+                if (!mataData.fileCount) {
+                    await dbTool.getPathInfoList();
+                    mataData.fileCount = await dbTool.getMataData().then(data => data.fileCount);
+                }
                 await dbTool.close();
                 fileInfoList.push({id: i, fileName, filePath, size, sizeFormat, mataData});
             }
@@ -172,22 +177,53 @@ class DBTool {
         });
     };
 
-    getFileCount = async function () {
+    // 对全部的路径进行扫描统计
+    getPathInfoList = async function () {
         let that = this;
-        await that.connect();
-        const [err, res] = await awaitWrap(this.sqlite3Promise.all('select count(file_gid) as file_count from file_info'));
-        let fileCount = res.pop().file_count || 0;
-        return fileCount;
+        if (this.pathInfoList.length > 0) return this.pathInfoList;
+
+        // 全部文件夹
+        let realtimePathList = await this.sqlite3Promise.all('select distinct file_path from file_info');
+        realtimePathList = realtimePathList.map(item => item.file_path);
+        let realtimePathMet = new Map();
+        for (let i = 0; i < realtimePathList.length; i++) {
+            FSTool.pathSplit(realtimePathList[i]).forEach(item => {
+                realtimePathMet.set(item, {path: item, file_count: 0, total_size: 0});
+            });
+        }
+
+        // 各目录下，文件数量、总大小
+        let pathInfoList = await this.sqlite3Promise.all('SELECT file_path,count( file_size ) AS file_count,sum( file_size ) AS total_size FROM file_info GROUP BY file_path');
+        for (let i = 0; i < pathInfoList.length; i++) {
+            FSTool.pathSplit(pathInfoList[i].file_path).forEach(item => {
+                realtimePathMet.get(item).file_count += pathInfoList[i].file_count;
+                realtimePathMet.get(item).total_size += pathInfoList[i].total_size;
+            });
+        }
+
+
+        realtimePathList = [];
+        for (const [key] of realtimePathMet) {
+            realtimePathList.push(realtimePathMet.get(key));
+        }
+
+        this.pathInfoList = realtimePathList;
+        let mataData = await that.getMataData();
+        mataData.fileCount =  realtimePathMet.get('\\').file_count;
+        mataData.totalSize = realtimePathMet.get('\\').total_size;
+        await that.setMataData(mataData);
+        return realtimePathList;
     };
+
 
     // 获取目录结构
     getDBPathTree = async function () {
         let that = this;
         await that.connect();
-        let pathList = await that.getPathList();
+        let pathInfoList = await that.getPathInfoList();
         const treeDTO = [];
-        pathList.forEach(item => {
-            const nodeArray = item.split('\\');
+        pathInfoList.forEach(({path, file_count, total_size}) => {
+            const nodeArray = path.split('\\');
             let children = treeDTO;
             // 循环构建子节点
             for (const i of nodeArray) {
@@ -228,7 +264,7 @@ class DBTool {
         let that = this;
         await that.connect();
         // 获取全部 文件夹 列表
-        let pathList = await that.getPathList();
+        let pathInfoList = await that.getPathInfoList();
 
         // 构造文件夹对象
         let itemFolder = [];
@@ -236,11 +272,11 @@ class DBTool {
         let matchPathItem = dirPath.split('\\').filter(p => p !== '');
 
 
-        pathList.forEach(p => {
-            let sourcePathItem = p.split('\\').filter(p => p !== '');
+        pathInfoList.forEach(({path, file_count, total_size}) => {
+            let sourcePathItem = path.split('\\').filter(p => p !== '');
             let matchArr = sourcePathItem.slice(0, matchPathItem.length);
             if (JSON.stringify(matchPathItem) === JSON.stringify(matchArr)) {
-                let pathItem = p.replace(dirPath, '').split('\\').filter(p => p !== '');
+                let pathItem = path.replace(dirPath, '').split('\\').filter(p => p !== '');
                 let childPath = pathItem[0];
                 if (childPath && !set.has(childPath)) {
                     set.add(childPath);
@@ -286,8 +322,6 @@ class DBTool {
         console.log(`统计文件完成，共计：${filePathList.length}项`);
         console.time('数据打包入库');
         let filePathChunk = lodash.chunk(filePathList, chunkSize);
-        filePathList = [];
-
 
         let fileBufferSize = 0;
         let miniFilePathList = [];        // 小文件（1~8kb）列表
@@ -335,6 +369,7 @@ class DBTool {
 
 
         console.timeEnd('数据打包入库');
+        that.pathInfoList = [];
         await that.close();
     };
 
@@ -422,16 +457,6 @@ class DBTool {
         }
     };
 
-    // 获取目录的树状图结构
-    getPathList = async function () {
-        let that = this;
-        await that.connect();
-        const listObj = await this.sqlite3Promise.all('select distinct file_path from file_info');
-        const list = [];
-        listObj.forEach(e => list.push(e['file_path']));
-
-        return list;
-    };
 
     // 根据目录获取文件
     getFileListByPath = async function (path) {
@@ -444,23 +469,24 @@ class DBTool {
     getDirInfo = async function (dirPath) {
         let that = this;
         await that.connect();
-        let dirInfo = await this.sqlite3Promise.all('select count(file_size) as count,sum(file_size) as totalSize from file_info where file_path LIKE ?', [dirPath + '%']);
-        let count = dirInfo[0].count;
-        let totalSize = dirInfo[0].totalSize;
+
+        let pathInfoList = await that.getPathInfoList();
+        let dirInfo = pathInfoList.find(item => item.path === dirPath);
+        let count = dirInfo.file_count;
+        let totalSize = dirInfo.total_size;
 
         if (totalSize < 1024) {
             totalSize = totalSize + 'b';
         } else if (totalSize < 1024 * 1024) {
-            totalSize = (totalSize / 1024 ).toFixed(2) + 'Kb';
+            totalSize = (totalSize / 1024).toFixed(2) + 'Kb';
         } else if (totalSize < 1024 * 1024 * 1024) {
             totalSize = (totalSize / 1024 / 1024).toFixed(2) + 'MB';
         } else if (totalSize < 1024 * 1024 * 1024 * 1024) {
-            totalSize = (totalSize / 1024 / 1024/ 1024).toFixed(2) + 'GB';
+            totalSize = (totalSize / 1024 / 1024 / 1024).toFixed(2) + 'GB';
         }
 
         return {
-            childFileCount: count,
-            childFileTotalSize: totalSize
+            childFileCount: count, childFileTotalSize: totalSize
         };
     };
 
@@ -537,7 +563,7 @@ class DBTool {
         dir = `${dir}%`;
         const [err, res] = await awaitWrap(this.sqlite3Promise.run('delete from file_info where file_path like ?', [dir]));
 
-        // await that.wipeCache();
+        that.pathInfoList = [];
         return res;
     };
 
@@ -549,7 +575,7 @@ class DBTool {
         filePath = filePath.replaceAll('/', '\\');
         const [err, res] = await awaitWrap(this.sqlite3Promise.run('delete from file_info where file_path = ? and file_name = ?', [filePath, fileName]));
 
-        // await that.wipeCache();
+        that.pathInfoList = [];
         return res;
     };
 

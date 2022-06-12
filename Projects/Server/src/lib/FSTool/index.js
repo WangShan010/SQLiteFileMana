@@ -7,6 +7,7 @@ const getFileList = require('./getFileList.js');
 const getPathInfo = require('./getPathInfo.js');
 const getFileInfoList = require('./getFileInfoList/index.js');
 const compressible = require('./compressible.js');
+const pathSplit = require('./pathSplit.js');
 const readFileAsync = require('./readFileAsync.js');
 
 const Index = {
@@ -18,6 +19,7 @@ const Index = {
     getFileList,
     getFileInfoList,
     createFile,
+    pathSplit,
 
     // 异步读取文件
     readFileAsync,

@@ -7,5 +7,11 @@
     "dev": "chcp 65001 && npm run start",
     "start": "electron .",
     "build": "electron-packager . WinUI --win --out ../../Release --arch=x64  --overwrite --electron-version 18.2.0"
+  },
+  "dependencies": {
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa2-cors": "^2.0.6"
   }
 }

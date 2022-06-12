@@ -1,14 +1,14 @@
 # SQLiteFileMana
 
 ```
-> V1.2（发行版）  — 望山010 — 2022年 06 月 09 日
+> V1.3（发行版）  — 望山010 — 2022年 06 月 10 日
 ```
 
 
 
-## 一、🐯 平台简介
+## 一、🐯 项目简介
 
-**SQLiteFileMana**，扎根 WebGIS 开发，打造一款易用的 GIS 资源存储分发程序，**全部源码开源**，个人与企业可 100% 免费使用。
+**SQLiteFileMana**，扎根 WebGIS 开发，打造一款易用的 GIS 资源存储分发程序，**服务端源码完全开源**，个人与企业可 100% 免费使用。
 
 
 
@@ -47,8 +47,8 @@
 
 | 文件名          | 下载地址                                                     | 版本号         |
 | --------------- | ------------------------------------------------------------ | -------------- |
-| Server-win-x64  | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/Server-win-x64.rar | V1.2（发行版） |
-| WinUI-win32-x64 | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/WinUI-win32-x64.rar | V1.2（发行版） |
+| Server-win-x64  | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/Server-win-x64.rar | V1.3（发行版） |
+| WinUI-win32-x64 | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/WinUI-win32-x64.rar | V1.3（发行版） |
 
 
 
@@ -121,7 +121,6 @@
 - SQLiteFileMana
 	- Projects
 		- Server			服务器项目（源码）
-		- WebUI				界面 UI 项目（源码）
 		- WinUI				windows 外壳程序（源码）
 	- Release
 		- Doc				文档相关
@@ -131,7 +130,7 @@
 
 
 
-> 本项目分为三个子程序：
+> 本项目分为两个子程序：
 
 ### 1、WinUI
 
@@ -139,13 +138,7 @@
 
 
 
-### 2、WebUI
-
-基于 Vue-Cli 前端全家桶进行开发，提供文件管理的 UI 界面
-
-
-
-### 3、Server
+### 2、Server
 
 应用程序的核心服务层，包含了：数据库访问、文件管理、权限管理、发布 HTTP 静态资源等后端功能模块。
 
@@ -329,7 +322,7 @@ cnpm install pkg -g
 | -------- | ------------------------------------------------------------ |
 | 国内镜像 | https://gitee.com/WangShan010/SQLiteFileMana.git             |
 | GitHub   | https://github.com/WangShan010/SQLiteFileMana.git（没有实时维护，可能会有版本滞后） |
-| 最新版本 | V1.2	2022年06月09日                                       |
+| 最新版本 | V1.3	2022年06月10日                                       |
 | 交流群   | QQ交流群：199800258                                          |
 | 作者     | WangShan010（QQ：2394837320）                                |
 

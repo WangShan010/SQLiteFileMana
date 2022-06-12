@@ -1,6 +1,6 @@
 const path = require('path');
 const fsPromise = require('fs-promise');
-const createAesAPair = require('../lib/createAesAPair.js');
+const RSATool=require('../lib/RSATool.js')
 let configInit = false;
 const configTool = {
     appBasePath: '',
@@ -33,7 +33,7 @@ const configTool = {
 
                 // 判断配置文件开启了安全模块，并且还未初始化安全模块
                 if (this.config.safeModule && this.config.safeModule.publicDer === '' && this.config.safeModule.privateDer === '') {
-                    let rsa = createAesAPair();
+                    let rsa = RSATool.createKey();
                     this.config.safeModule.privateDer = rsa.privateDer;
                     this.config.safeModule.publicDer = rsa.publicDer;
                     fsPromise.writeJSON(configFile, this.config);

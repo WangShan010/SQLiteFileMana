@@ -1,48 +1,43 @@
-const http = require('http');
+const path = require('path');
 const FileSystem = require('./FileSystem.js');
-const url = require('url');
+const Koa = require('koa');
+const koaStatic = require('koa-static');
+const cors = require('koa2-cors');
+const router = require('koa-router');
+
 const hostname = '127.0.0.1';
 const port = 3002;
-let server = http.createServer();
+const APP = new Koa();
+
+
+const sysFileRoutes = new router({prefix: '/sysFile'});
+
+sysFileRoutes
+    .get('/choosePath', async (ctx, next) => {
+        ctx.set('Content-Type', 'application/json;charset=utf-8');
+        let choosePath = await FileSystem.choosePathDialog();
+        ctx.status = choosePath ? 200 : 500;
+        ctx.body = JSON.stringify({path: choosePath});
+    })
+    .get('/openCatalogue', async (ctx, next) => {
+        let {path:pathToOpen} = ctx.request.query;
+        if (pathToOpen) {
+            await FileSystem.openCatalogue(pathToOpen);
+            ctx.status = 200;
+            ctx.body =JSON.stringify({path: pathToOpen});
+        }else {
+            ctx.status = 500;
+            ctx.body =JSON.stringify({path: 'Error'});
+        }
+    });
+
 
 let WebServer = {
-    Routes: async function () {
-        server.on('request', async function (req, res) {
-
-            let params = url.parse(req.url, true).query;
-            let reqUrl = url.parse(req.url, true).pathname;
-
-            // 开启跨域
-            res.setHeader('Access-Control-Allow-Origin', '*');
-
-            let state;
-            switch (reqUrl) {
-                case '/sysFile/choosePath':
-                    let choosePath = await FileSystem.choosePathDialog();
-                    state = choosePath ? 200 : 500;
-                    res.writeHead(state, {'Content-Type': 'application/json;charset=utf-8'});
-                    res.write(JSON.stringify({path: choosePath}));
-                    res.end();
-                    break;
-                case '/sysFile/openCatalogue':
-                    let pathToOpen = params.path;
-                    if (pathToOpen) {
-                        await FileSystem.openCatalogue(pathToOpen);
-                        state = 200;
-                        res.writeHead(state, {'Content-Type': 'application/json;charset=utf-8'});
-                        res.write(JSON.stringify({path: pathToOpen}));
-                    } else {
-                        state = 500;
-                        res.writeHead(state, {'Content-Type': 'application/json;charset=utf-8'});
-                        res.write(JSON.stringify({path: 'Error'}));
-                    }
-                    res.end();
-                    break;
-            }
-        });
-    }, run: async function () {
-        await this.Routes();
-        server.listen(port, hostname, () => {
+    run: async function () {
+        APP.listen(port, function () {
+            APP.use(koaStatic(path.join(__dirname, '../../webRenderer/')), {defer: true});
+            APP.use(cors());
+            APP.use(sysFileRoutes.routes());
             console.log(`服务器运行在 http://${hostname}:${port}/`);
         });
     }
