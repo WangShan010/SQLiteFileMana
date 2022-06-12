@@ -1,0 +1,44 @@
+[
+  {
+    "name": "api.mapbox.com",
+    "url": "https://pan.baidu.com/s/14c7X0z42BpCJaNGlG3ewwg?pwd=s45k",
+    "size": "6.38GB",
+    "describe": "MapBox 卫星影像，全球范围 0-10 级",
+    "date": "2022-03-15"
+  },
+  {
+    "name": "api.mapbox.com",
+    "url": "",
+    "size": "",
+    "describe": "MapBox 卫星影像，全球范围 0-12 级",
+    "date": "2022-03-15"
+  },
+  {
+    "name": "api.mapbox.com",
+    "url": "",
+    "size": "",
+    "describe": "MapBox 卫星影像，中国范围 0-15 级",
+    "date": "2022-05-30"
+  },
+  {
+    "name": "assets.cesium.com",
+    "url": "https://pan.baidu.com/s/12YZSuXEi9UhP5_a7fVpEow?pwd=y4ap",
+    "size": "10.02GB",
+    "describe": "Cesium 官网地形，中国范围 0-18 级",
+    "date": "2022-06-03"
+  },
+  {
+    "name": "tile.openstreetmap.org",
+    "url": "",
+    "size": "",
+    "describe": "OSM 电子地图，全球范围 0-10 级",
+    "date": "2022-04-21"
+  },
+  {
+    "name": "tile.openstreetmap.org",
+    "url": "",
+    "size": "",
+    "describe": "OSM 电子地图，中国范围 0-15 级",
+    "date": "2022-04-21"
+  }
+]
