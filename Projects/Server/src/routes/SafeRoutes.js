@@ -3,7 +3,6 @@ const JWT = require('../lib/JWT.js');
 
 const SafeRoutes = new router({prefix: '/safe'});
 
-// 通配符的写法
 SafeRoutes
     // 验证 Token 的有效性
     .get('/verifyToken', async (ctx) => {

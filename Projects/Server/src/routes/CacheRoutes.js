@@ -54,12 +54,15 @@ cacheRoutes
     // 例如：
     //      原URL：https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json
     //      调用：http://localhost:3000/cacheServer/https/geo.datav.aliyun.com/areas_v3/bound/100000_full.json
-    .get('/:protocol/:url(.*)', async (ctx, next) => {
+    .get('/:protocol/:ip/:port/:url(.*)', async (ctx, next) => {
         let protocol = ctx.params.protocol === 'http' ? 'http://' : 'https://';
+        let ip = ctx.params.ip;
+        let port = ctx.params.port;
         let url = ctx.params.url;
+        let reqUrl = `${protocol}${ip}:${port}/${url}`;
 
         // 缓存文件保存的绝对路径
-        let fileSavePath = path.join(configTool.appBasePath, 'temp/fileOut', url);
+        let fileSavePath = path.join(configTool.appBasePath, 'temp/fileOut', `${ctx.params.protocol}/${ip}/${port}/${url}`);
         let fileDir = path.dirname(fileSavePath);
 
         if (url) {
@@ -72,10 +75,13 @@ cacheRoutes
                 ctx.body = res;
             }
 
-            // 其他网络资源
+            // 未缓存过的其他网络资源
             if (!res) {
-                [err, res] = await awaitWrap(axios.get(protocol + url, {responseType: 'arraybuffer'}));
-                if (res) {
+                [err, res] = await awaitWrap(axios.get(reqUrl, {responseType: 'arraybuffer'}));
+                if (err){
+                    ctx.status = 422;
+                    ctx.body = err;
+                }else {
                     for (const resKey in res.headers) {
                         ctx.set(resKey, res.headers[resKey]);
                     }
@@ -89,13 +95,6 @@ cacheRoutes
                         await fsPromises.ensureDir(fileDir);
                         fs.writeFileSync(fileSavePath, res.data);
                     }
-                    // 存入缓存数据库
-                    if (configTool.config.CacheSaveDB) {
-
-                    }
-                } else {
-                    ctx.status = 422;
-                    ctx.body = err;
                 }
             }
 

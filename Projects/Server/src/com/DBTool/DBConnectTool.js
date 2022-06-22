@@ -79,6 +79,16 @@ async function openDB(DBName, autoClose = false) {
     }
 }
 
+// 重新连接数据库
+async function reConnect(DBName) {
+    let DBItem = DBList.find(item => item.DBName === DBName);
+    let dbTool = DBItem?.dbTool;
+    if (dbTool) await dbTool.close();
+
+    await openDB(DBName, false);
+}
+
+
 async function closeAll() {
     DBList.forEach((item) => {
         item.dbTool?.close().then();
@@ -88,9 +98,9 @@ async function closeAll() {
     scanningTimer = null;
 }
 
-
 const DBConnectTool = {
     openDB,
+    reConnect,
     closeAll
 };
 

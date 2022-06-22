@@ -40,7 +40,7 @@ class TileUtil {
         return 0;
     }
 
-    getTilesByGeoJson(geoJson, maxZoom = 8, log = false) {
+    getTilesByGeoJson(geoJson, zoom = 8, log = false) {
         geoJson = geoJson || turf.polygon([[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]);
         geoJson = turf.flatten(geoJson);
 
@@ -62,7 +62,7 @@ class TileUtil {
             });
 
 
-            for (let i = 0; i < maxZoom; i++) {
+            for (let i = 0; i < zoom; i++) {
                 let parentZoomTileList = tileMap.get(i);
                 let parentZoomTileCount = parentZoomTileList.length;
                 let currentZoomTileList = [];
@@ -95,12 +95,12 @@ class TileUtil {
             [...tileMap.values()].forEach(function (tileList) {
                 while (tileList.length) {
                     let tile = tileList.pop();
-                    tileSet.add(tile.x, tile.y, tile.zoom);
+                    tile.zoom === zoom && tileSet.add(tile.x, tile.y, tile.zoom);
                 }
             });
         });
 
-        return tileSet.popAll();
+        return tileSet.getAll();
     }
 
     tileXYZToRectanglePolygon(x, y, zoom) {

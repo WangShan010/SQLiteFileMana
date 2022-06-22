@@ -18,26 +18,11 @@ class TileSet {
         xObj[y] = true;
     }
 
-    removeAll() {
-        this.zoomMap = [];
+    delete(x, y, zoom) {
+        this.tileObj[zoom][x][y] = false;
     }
 
     getAll() {
-        let result = [];
-        for (const zoom in this.tileObj) {
-            for (const x in this.tileObj[zoom]) {
-                for (const y in this.tileObj[zoom][x]) {
-                    if (this.tileObj[zoom][x][y] === true) {
-                        result.push({x, y, zoom});
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    popAll() {
         let result = [];
         for (const zoom in this.tileObj) {
             for (const x in this.tileObj[zoom]) {
@@ -50,7 +35,6 @@ class TileSet {
             }
             this.tileObj[zoom] = {};
         }
-        this.tileObj = {};
         return result;
     }
 }

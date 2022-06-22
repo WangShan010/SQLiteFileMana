@@ -46,8 +46,8 @@ const configTool = {
                     'manageServerPort': 3001,
                     'wwwPath': 'www',
                     'prefixHTTPList': [],
-                    'CacheSaveFile': false,
-                    'CacheSaveDB': true,
+                    'CacheSaveFile': true,
+                    'CacheSaveDB': false,
                     'safeModule': {
                         'state': false,
                         'publicDer': '',

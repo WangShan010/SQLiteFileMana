@@ -2,6 +2,7 @@ const fs = require('fs');
 const zlibPromise = require('./gzip.js');
 const calcFileInfo= require('./calcFileInfo.js');
 const createFile = require('./createFile.js');
+const createFileAsync = require('./createFileAsync.js');
 const deleteFile = require('./deleteFile.js');
 const getFileList = require('./getFileList.js');
 const getPathInfo = require('./getPathInfo.js');
@@ -19,6 +20,7 @@ const Index = {
     getFileList,
     getFileInfoList,
     createFile,
+    createFileAsync,
     pathSplit,
 
     // 异步读取文件

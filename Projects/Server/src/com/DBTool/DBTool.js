@@ -134,6 +134,7 @@ class DBTool {
         let res = false;
         // 该映射目录是有效文件夹，并且目录下没有同名 sqlite3 文件
         if (targetDirectoryInfo && targetDirectoryInfo.isDirectory) {
+            console.log(`开始导出资源库：${DBName}`);
             let dbTool = new DBTool(DBName);
             let pg = new ProgressBar('导出资源库', 40);
             await dbTool.exportFile(targetDirectory, function (e) {
@@ -209,7 +210,7 @@ class DBTool {
 
         this.pathInfoList = realtimePathList;
         let mataData = await that.getMataData();
-        mataData.fileCount =  realtimePathMet.get('\\').file_count;
+        mataData.fileCount = realtimePathMet.get('\\').file_count;
         mataData.totalSize = realtimePathMet.get('\\').total_size;
         await that.setMataData(mataData);
         return realtimePathList;
@@ -442,18 +443,37 @@ class DBTool {
     exportFile = async function (path, progressFunc) {
         let that = this;
         await that.connect();
-        let list = await this.sqlite3Promise.all('select * from file_list');
 
-        for (let i = 0; i < list.length; i++) {
-            let file = list[i];
+        let [{count}] = await this.sqlite3Promise.all('select max(file_gid) as count from file_list');
+        let index = 0;
 
-            let fileData = file.file_zip === 'gzip' ? await zlibPromise.unzip(file.file_data) : file.file_data;
+        let pageCount = Math.ceil(count / 5000);
 
-            await FSTool.createFile((path || `${configTool.appBasePath}/OutFile`) + `/${this.dbName}${file.file_full_path}`, fileData);
+        for (let i = 0; i < pageCount; i++) {
+            let list = await this.sqlite3Promise.all('select * from file_list WHERE ?<=file_gid and file_gid<? limit 5000', [i * 5000, (i + 1) * 5000]);
 
-            typeof progressFunc === 'function' && progressFunc({
-                description: '文件导出', completed: i + 1, total: list.length
-            });
+            let pList = [];
+            while (list.length > 0) {
+                let fileItem = list.pop();
+                index++;
+
+                pList.push(new Promise(async (resolve) => {
+                    let fileData = fileItem.file_zip === 'gzip' ? await zlibPromise.unzip(fileItem.file_data) : fileItem.file_data;
+                    await FSTool.createFileAsync((path || `${configTool.appBasePath}/OutFile`) + `/${this.dbName}${fileItem.file_full_path}`, fileData);
+                    typeof progressFunc === 'function' && progressFunc({
+                        description: '文件导出', completed: index, total: count
+                    });
+                    resolve();
+                }));
+
+
+                if (list.length === 0) {
+                    await Promise.all(pList);
+                    pList = [];
+                }
+            }
+
+            await Promise.all(pList);
         }
     };
 

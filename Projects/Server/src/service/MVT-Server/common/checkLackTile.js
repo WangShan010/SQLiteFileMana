@@ -1,41 +1,67 @@
 const path = require('path');
+const TileSet = require('./TileSet.js');
 const FSTool = require('../../../lib/FSTool/index.js');
 
+
 class CheckLackTile {
-    constructor(TileUtil) {
-        this.TileUtil = TileUtil;
+    constructor(tilePath) {
+        // 确保瓦片文件夹路径是以 \\ 结尾
+        if (tilePath.endsWith('/') || tilePath.endsWith('\\')) {
+            this.tilePath = path.join(tilePath, '');
+        } else {
+            this.tilePath = path.join(tilePath + '\\', '');
+        }
+
+        this.hasTileList = [];
     }
 
-    async scanTileList(tilePath) {
-        const filePathList = await FSTool.getFileList(tilePath);
-        let set = new Set();
+    /**
+     * 扫描瓦片文件夹，获取瓦片列表
+     * @param scanZoom          扫描瓦片的缩放级别，默认为 -1 扫描所有层级
+     * @returns {Promise<[]>}
+     */
+    async scanTileList(scanZoom = -1) {
+        let scanPath = scanZoom === -1 ? this.tilePath: this.tilePath + scanZoom + '\\';
+        const filePathList = await FSTool.getFileList(scanPath);
+
+
+        let tileSet = new TileSet();
         while (filePathList.length) {
-            let fileStr = filePathList.pop().replace(path.join(tilePath, '') + '\\', '');
+            let fileItem = filePathList.pop();
+            let fileStr = fileItem.replace(path.join(this.tilePath, ''), '');
             fileStr = fileStr.replace(path.extname(fileStr), '');
             let [zoom, x, y] = fileStr.split('\\');
-            set.add({x: Number(x), y: Number(y), zoom: Number(zoom)});
+            if (!isNaN(zoom) && !isNaN(x) && !isNaN(y)) {
+                if (scanZoom === -1 || Number(zoom) === scanZoom) {
+                    tileSet.add(Number(x), Number(y), Number(zoom));
+                }
+            }
         }
-        return [...set];
+
+        this.hasTileList = tileSet.getAll();
+        return this.hasTileList;
     }
 
-    async findLackTile(allTileList, scanTileList, minZoom = 0, maxZoom = 4) {
-        let allTileSet = new Set();
+    async findLackTile(allTileList, scanZoom = -1) {
+        let hasTileList = await this.scanTileList(scanZoom);
+        let lackTileSet = new TileSet();
 
-        while (allTileList.length) {
-            let tile=allTileList.pop();
-            if (tile.zoom >= minZoom && tile.zoom <= maxZoom) {
-                allTileSet.add(JSON.stringify(tile));
+
+        for (let i = 0; i < allTileList.length; i++) {
+            let tile = allTileList[i];
+            if (tile.zoom === scanZoom || scanZoom === -1) {
+                lackTileSet.add(tile.x, tile.y, tile.zoom);
             }
         }
 
-        while (scanTileList.length) {
-            let tile = scanTileList.pop();
-            if (tile.zoom >= minZoom && tile.zoom <= maxZoom) {
-                allTileSet.delete(JSON.stringify(tile));
+        for (let i = 0; i < hasTileList.length; i++) {
+            let tile = hasTileList[i];
+            if (tile.zoom === scanZoom || scanZoom === -1) {
+                lackTileSet.delete(tile.x, tile.y, tile.zoom);
             }
         }
 
-        return [...allTileSet].map(item => JSON.parse(item));
+        return lackTileSet.getAll();
     }
 }
 

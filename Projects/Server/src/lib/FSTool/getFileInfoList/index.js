@@ -10,6 +10,7 @@
  */
 const configTool = require('../../../com/configTool.js');
 const simpleFileInfoList = require('./simpleFileInfoList.js');
+const randomAsync = require('./randomAsync.js');
 const phasedFileInfoList = require('./phasedFileInfoList.js');
 const fiveThreadFileInfoList = require('./fiveThreadFileInfoList/index.js');
 
@@ -48,6 +49,9 @@ async function getFileInfoList({filePathList, mode, phasedFunc, progressFunc, ro
             break;
         case 'fiveThread':
             fileInfoList = await fiveThreadFileInfoList({filePathList, phasedFunc, progressFunc, rootPath});
+            break;
+        case 'randomAsync':
+            fileInfoList = await randomAsync({filePathList, progressFunc, rootPath});
             break;
     }
     return fileInfoList;
