@@ -1,0 +1,52 @@
+{
+  "name": "app",
+  "version": "1.9.0",
+  "bin": "./src/index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
+    "compile": "./node_modules/.bin/babel ./src --out-dir ./compile",
+    "build": "pkg . --out-path=../../Release/Server-win-x64"
+  },
+  "pkg": {
+    "targets": [
+      "node16-win-x64"
+    ]
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "@turf/turf": "^6.5.0",
+    "axios": "^0.27.2",
+    "cesium": "^1.98.1",
+    "colors-console": "^1.0.3",
+    "core-js": "^3.25.0",
+    "crypto-js": "^4.1.1",
+    "fdir": "^5.2.0",
+    "fs-promise": "^2.0.3",
+    "http-proxy": "^1.18.1",
+    "jsrsasign": "^10.5.27",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-compress": "^5.1.0",
+    "koa-mount": "^4.0.0",
+    "koa-proxy-middleware": "^2.0.2",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa2-cors": "^2.0.6",
+    "node-machine-id": "^1.1.12",
+    "single-line-log": "^1.1.2",
+    "sqlite3": "^5.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.4",
+    "ws": "^8.6.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.13",
+    "@babel/preset-env": "^7.18.10",
+    "@types/node": "^18.11.8",
+    "nodemon": "^2.0.19"
+  }
+}
