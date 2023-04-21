@@ -5,6 +5,11 @@ const getServerInfo = require('../lib/getServerInfo.js');
 const configTool = require('../com/configTool.js');
 const FSTool = require('../lib/FSTool/index.js');
 const {openDB, reConnect, closeAll} = require('../com/DBTool/DBConnectTool.js');
+const CesiumTerrain = require('../lib/GISServer/CesiumTerrain/CesiumTerrain.js');
+const MapBoxTile = require('../lib/GISServer/MapboxTile/MapboxTile.js');
+const OSMTile = require('../lib/GISServer/OSMTile/OSMTile.js');
+
+
 const ManageRoutes = new router({prefix: '/manage'});
 
 ManageRoutes
@@ -101,16 +106,6 @@ ManageRoutes
         let res = await dbTool.wipeCache();
         ctx.body = JSON.stringify(res);
     })
-    .get('/setMataData', async (ctx: any) => {
-        ctx.set('Content-Type', 'application/json;charset=utf-8');
-        let {DBName, mataData} = ctx.request.query;
-        let dbTool = await openDB(DBName);
-        if (mataData) {
-            mataData = JSON.parse(mataData);
-        }
-        let msg = await dbTool.setMataData(mataData);
-        ctx.body = JSON.stringify({msg});
-    })
     .get('/deleteByFullPath', async (ctx: any) => {
         ctx.set('Content-Type', 'application/json;charset=utf-8');
         let {DBName, fullPath} = ctx.request.query;
@@ -155,6 +150,69 @@ ManageRoutes
         } else {
             ctx.status = 404;
         }
-    });
+    })
+    .post('/setMataData', async (ctx: any) => {
+        ctx.set('Content-Type', 'application/json;charset=utf-8');
+        let {DBName, mataData} = ctx.request.body;
+        let dbTool = await openDB(DBName);
+        if (mataData) {
+            mataData = JSON.parse(mataData);
+        }
+        let msg = await dbTool.setMataData(mataData);
+        ctx.body = JSON.stringify({msg});
+    })
+
+    .get('/api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/:z/:x/:y.jpeg', async (ctx: any) => {
+        let {z, x, y} = ctx.params;
+        let [err, buffer] = await MapBoxTile.getSatelliteFileBuffer(z, x, y);
+
+        if (buffer) {
+            ctx.set('Content-Type', 'image/jpeg');
+            ctx.body = buffer;
+        } else {
+            ctx.status = 422;
+            ctx.body = err;
+            console.log('代理 MapBoxTile 瓦片失败', z, x, y);
+        }
+    })
+    .get('/api.mapbox.com/v4/mapbox.terrain-rgb/:z/:x/:y.png', async (ctx: any) => {
+        let {z, x, y} = ctx.params;
+        let [err, buffer] = await MapBoxTile.getTerrainRGBFileBuffer(z, x, y);
+
+        if (buffer) {
+            ctx.set('Content-Type', 'image/png');
+            ctx.body = buffer;
+        } else {
+            ctx.status = 422;
+            ctx.body = err;
+            console.log('代理 MapBoxTile 瓦片失败', z, x, y);
+        }
+    })
+    .get('/tile.openstreetmap.org/:z/:x/:y.png', async (ctx: any) => {
+        let {z, x, y} = ctx.params;
+        let [err, buffer] = await OSMTile.getFileBuffer(z, x, y);
+        if (buffer) {
+            ctx.set('Content-Type', 'image/jpeg');
+            ctx.body = buffer;
+        } else {
+            ctx.status = 422;
+            ctx.body = err;
+            console.log('代理 OSM 瓦片失败', z, x, y);
+        }
+    })
+    .get('/assets.cesium.com/1/:url(.*)', async (ctx: any) => {
+        let url = ctx.params.url;
+        let [err, buffer] = await CesiumTerrain.getFileBuffer(url);
+
+        if (buffer) {
+            ctx.body = buffer;
+        } else {
+            ctx.status = 422;
+            ctx.body = err;
+            console.log(`代理 Cesium 官方地形数据失败，${ctx.url}`);
+        }
+    })
+
+;
 
 export = ManageRoutes;

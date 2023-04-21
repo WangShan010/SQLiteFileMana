@@ -13,22 +13,22 @@
 </p>
 
 ```
-> v1.9（发行版）  — 望山010 — 2022年 11 月 01 日
+> v2.2（发行版）  — 望山010 — 2023年 03 月 31 日
 ```
 
 版本新特性：
 
 >:star: Server 程序新增适配了 Windows Server 2008、Windows 7、Linux
 >
+>:star: Server 程序使用 TypeScript 进行重构
+>
 >:star: 新增资源库的文件搜索功能
 >
->:star: 支持了 temp/fileDB 设置子文件夹
+>:star: 支持了 temp/fileDB 包含子文件夹
 >
 >:star: 新增高级管理工具，允许对数据库悬空文件进行清理
 >
->:star: 修复了资源库默认建库的 Bug，修复了删除文件的 Bug...
->
->:star: WinUI-win32-x64 程序新增了若干功能，可免费使用至 2023年 01月 01日
+>:star: WinUI-win32-x64 程序，可免费使用至 **2023年 05月 01日**
 
 
 
@@ -36,7 +36,7 @@
 | -------- |--------------------------------------------------------------------|
 | 国内镜像 | https://gitee.com/WangShan010/SQLiteFileMana.git                   |
 | GitHub   | https://github.com/WangShan010/SQLiteFileMana.git（没有实时维护，可能会有版本滞后） |
-| 最新版本 | v1.9	2022年11月01日                                                   |
+| 最新版本 | v2.2	2023 年 03 月 31 日                                              |
 | 交流群   | QQ交流群：199800258                                                    |
 | 作者     | WangShan010（QQ：2394837320）                                         |
 
@@ -80,19 +80,22 @@
 
 **下载地址：**
 
-| 文件名          | 下载地址                                                                                 | 版本号       |
-| --------------- |--------------------------------------------------------------------------------------|-----------|
-| Server-win-x64  | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/Server-win-x64.rar | v1.9（发行版） |
-| WinUI-win32-x64 | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/WinUI-win32-x64.rar    | v1.9（发行版） |
-
-Linux 版需要自行下载源码包进行编译，打包非常简单，或直接联系作者购买。
-
+| 文件名           | 下载地址                                                     | 版本号       |
+| ---------------- | ------------------------------------------------------------ |-----------|
+| Server-win-x64   | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/Server-win-x64.rar | v2.2（发行版） |
+| Server-linux-x64 | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/Server-linux-x64.rar | v2.2（发行版） |
+| WinUI-win32-x64  | https://sqlite-file-mana.oss-cn-hangzhou.aliyuncs.com/Release/WinUI-win32-x64.rar | v2.2（发行版） |
 
 
-**使用指南：**
+
+Windows **使用指南：**
 
 - 第一步：双击启动：Release\Server-win-x64\app.exe
 - 第二步：双击启动：Release\WinUI-win32-x64\WinUI.exe
+
+linux **使用指南：**
+
+- 执行命令：【./app】
 
 
 

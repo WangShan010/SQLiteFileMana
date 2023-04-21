@@ -30,7 +30,7 @@ EncryptRoutes
                 return;
             }
 
-            if (!file?.file_data) {
+            if (!file || !file.file_data) {
                 ctx.status = 422;
                 ctx.set('Content-Type', 'application/json;charset=utf-8');
                 ctx.body = JSON.stringify({message: `数据库：【${DBName}】，不存在该文件资源，路径：【${fullPath}】`});
@@ -43,7 +43,7 @@ EncryptRoutes
                     name: file.file_name,
                     md5: file.file_md5,
                     message: '数据包已加密，加密等级：最高',
-                    version: 'ServerPro V1.9',
+                    version: 'ServerPro v2.2',
                     generateTool: 'https://gitee.com/WangShan010/SQLiteFileMana',
                     content: CryptoUtil.Encrypt(hexStr, '1234567890')
                 };

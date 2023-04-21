@@ -49,7 +49,7 @@ function creatThread(threadName: string, threadPathList: any[], phasedFunc: Func
                 case 'Progress': {
                     optionObj.index += reData.data;
                     typeof progressFunc === 'function' && progressFunc({
-                        description: '【开启 4 进程扫描 MD5】',
+                        description: '【开启 5 进程扫描 MD5】',
                         completed: optionObj.index,
                         total: optionObj.progressLength
                     });

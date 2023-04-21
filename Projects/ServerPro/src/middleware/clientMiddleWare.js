@@ -21,7 +21,7 @@
     const configTool = require('../com/configTool.js');
     function clientMiddleWare(app) {
         app.use(errHandler());
-        app.use(cors());
+        configTool.config.clientCORS && app.use(cors());
         app.use(compress({ br: false }));
         resourcesProxy(app);
         portProxy(app);

@@ -12,7 +12,10 @@ const configTool = require('../com/configTool.js');
 
 function clientMiddleWare(app: any) {
     app.use(errHandler());
-    app.use(cors());
+
+    // 允许跨域请求
+    configTool.config.clientCORS && app.use(cors());
+
     app.use(compress({br: false}));
 
     resourcesProxy(app);

@@ -37,7 +37,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                 ctx.body = JSON.stringify({ message: `数据库不存在：【${DBName}】，正在新建数据库中，请稍后...` });
                 return;
             }
-            if (!file?.file_data) {
+            if (!file || !file.file_data) {
                 ctx.status = 422;
                 ctx.set('Content-Type', 'application/json;charset=utf-8');
                 ctx.body = JSON.stringify({ message: `数据库：【${DBName}】，不存在该文件资源，路径：【${fullPath}】` });
@@ -50,7 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
                     name: file.file_name,
                     md5: file.file_md5,
                     message: '数据包已加密，加密等级：最高',
-                    version: 'ServerPro V1.9',
+                    version: 'ServerPro v2.2',
                     generateTool: 'https://gitee.com/WangShan010/SQLiteFileMana',
                     content: CryptoUtil_js_1.default.Encrypt(hexStr, '1234567890')
                 };

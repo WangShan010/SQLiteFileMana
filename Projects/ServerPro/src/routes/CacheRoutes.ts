@@ -4,9 +4,6 @@ const path = require('path');
 const router = require('koa-router');
 const axios = require('axios');
 const {getContentType, getExt} = require('../lib/ContentTypeTool.js');
-const CesiumTerrain = require('../service/GISServer/CesiumTerrain/CesiumTerrain.js');
-const MapBoxTile = require('../service/GISServer/MapboxTile/MapboxTile.js');
-const OSMTile = require('../service/GISServer/OSMTile/OSMTile.js');
 const awaitWrap = require('../lib/awaitWrap.js');
 const configTool = require('../com/configTool.js');
 const FSTool = require('../lib/FSTool/index.js');
@@ -14,43 +11,6 @@ const FSTool = require('../lib/FSTool/index.js');
 const cacheRoutes = new router({prefix: '/cacheServer'});
 
 cacheRoutes
-    .get('/api.mapbox.com/styles/v1/mapbox/satellite-v9/tiles/256/:z/:x/:y.jpeg', async (ctx: any) => {
-        let {z, x, y} = ctx.params;
-        let [err, buffer] = await MapBoxTile.getFileBuffer(z, x, y);
-
-        if (buffer) {
-            ctx.set('Content-Type', 'image/jpeg');
-            ctx.body = buffer;
-        } else {
-            ctx.status = 422;
-            ctx.body = err;
-            console.log('代理 MapBoxTile 瓦片失败', z, x, y);
-        }
-    })
-    .get('/tile.openstreetmap.org/:z/:x/:y.png', async (ctx: any) => {
-        let {z, x, y} = ctx.params;
-        let [err, buffer] = await OSMTile.getFileBuffer(z, x, y);
-        if (buffer) {
-            ctx.set('Content-Type', 'image/jpeg');
-            ctx.body = buffer;
-        } else {
-            ctx.status = 422;
-            ctx.body = err;
-            console.log('代理 OSM 瓦片失败', z, x, y);
-        }
-    })
-    .get('/assets.cesium.com/1/:url(.*)', async (ctx: any) => {
-        let url = ctx.params.url;
-        let [err, buffer] = await CesiumTerrain.getFileBuffer(url);
-
-        if (buffer) {
-            ctx.body = buffer;
-        } else {
-            ctx.status = 422;
-            ctx.body = err;
-            console.log(`代理 Cesium 官方地形数据失败，${ctx.url}`);
-        }
-    })
     // 例如：
     //      原URL：https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json
     //      调用：http://localhost:3000/cacheServer/https/geo.datav.aliyun.com/areas_v3/bound/100000_full.json

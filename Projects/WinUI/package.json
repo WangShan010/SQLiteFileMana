@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "chcp 65001 && npm run start",
     "start": "electron .",
-    "build": "electron-packager . WinUI --win --out ../../Release --arch=x64  --overwrite --electron-version 18.2.0"
+    "build": "electron-packager . WinUI --win --out ../../Release --arch=x64  --overwrite --electron-version 23.2.1"
   },
   "dependencies": {
     "koa": "^2.13.4",

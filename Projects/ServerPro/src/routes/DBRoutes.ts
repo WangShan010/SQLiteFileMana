@@ -31,7 +31,7 @@ DBRoutes
                 return;
             }
 
-            if (!file?.file_data) {
+            if (!file || !file.file_data) {
                 ctx.status = 422;
                 ctx.set('Content-Type', 'application/json;charset=utf-8');
                 ctx.body = JSON.stringify({message: `数据库：【${DBName}】，不存在该文件资源，路径：【${fullPath}】`});

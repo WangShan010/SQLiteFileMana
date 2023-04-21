@@ -18,7 +18,7 @@
         if (DBName && fullPath) {
             let dbTool = await openDB(DBName);
             let file = await dbTool.getFileByFullPath(fullPath);
-            if (!file?.file_data) {
+            if (!file || !file.file_data) {
                 throw new Error('文件不存在，路径：' + fullPath);
             }
             else {
@@ -37,7 +37,7 @@
         if (DBName && md5) {
             let dbTool = await openDB(DBName);
             let file = await dbTool.getFileByMd5(md5);
-            if (!file?.file_data) {
+            if (!file || !file.file_data) {
                 throw new Error('文件不存在，MD5：' + md5);
             }
             else {
